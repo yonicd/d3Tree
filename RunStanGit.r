@@ -53,4 +53,5 @@ RunStanGit=function(url.loc,dat.loc.in,r.file,flag=T){
 #                        '10.5_CasualEffectsUsingIV.R',
 #                        '10.6_IVinaRegressionFramework.R')
 #               )
+
 # a=dlply(ex,.(r.file),.fun=function(x) RunStanGit(url.loc,dat.loc,r.file=x$r.file),.progress = 'text')
