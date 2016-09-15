@@ -1,18 +1,28 @@
-RunStanGit=function(url.loc,dat.loc,r.file){
+RunStanGit=function(url.loc,dat.loc.in,r.file,flag=T){
+  
+  unpack.list <- function(object) {
+    for(.x in names(object)){
+      assign(value = object[[.x]], x=.x, envir = parent.frame())
+    }
+  }
   
   setwd.url=function(y){
     x=c(as.numeric(gregexpr('\\"',y)[[1]]),as.numeric(gregexpr("\\'",y)[[1]]))
     x=x[x!=-1]
-    gsub(substr(y,x[1],x[2]),paste0('"',dat.loc,substr(y,x[1]+1,x[2]-1),'"'),y)  
+    str.old=substr(y,x[1],x[2])
+    str.new=paste0('"',dat.loc,substr(y,x[1]+1,x[2]-1),'"')
+    str.out=gsub(str.old,str.new,y)
+    if(grepl('source',y)) str.out=paste0('unpack.list(RunStanGit(url.loc,dat.loc.in,',str.old,',flag=F))')
+    str.out  
   }
   
-  dat.loc=paste0(url.loc,dat.loc)
-  code.loc=paste0(url.loc,dat.loc,r.file)
+  dat.loc=paste0(url.loc,dat.loc.in)
+  code.loc=paste0(dat.loc,r.file)
   
   y=readLines(code.loc)
   y=gsub('print','#print',y)
   
-  for(i in which(grepl('read',y))) y[i]=setwd.url(y[i])
+  for(i in which(grepl('read|source',y))) y[i]=setwd.url(y[i])
   stan.find=which(grepl('stan\\(',y))
   to.unlink=rep(NA,length(stan.find))
   
@@ -30,12 +40,17 @@ RunStanGit=function(url.loc,dat.loc,r.file){
   for(i in stan.find) y[i]=gsub("[\\']",'',y[i])
   
   eval(parse(text=y))
-  
   junk=sapply(to.unlink[!is.na(to.unlink)],unlink)
-  list.out <- sapply(ls()[ls()%in%ls(pattern = '.sf1')], function(x) get(x))
-  return(list.out)}
+  if(flag){ret.obj='.sf1'}else{ret.obj='[^flag]'}
+  list.out <- sapply(ls()[ls()%in%ls(pattern = ret.obj)], function(x) get(x))
+  return(list.out)
+}
 
-
-url.loc='https://raw.githubusercontent.com/stan-dev/example-models/master/ARM/'
-
-a=RunStanGit(url.loc,dat.loc='Ch.10/',r.file='10.5_CasualEffectsUsingIV.R')
+#example
+# url.loc='https://raw.githubusercontent.com/stan-dev/example-models/master/ARM/'
+# dat.loc='Ch.10/'
+# ex=data.frame(r.file=c('10.4_LackOfOverlapWhenTreat.AssignmentIsUnknown.R',
+#                        '10.5_CasualEffectsUsingIV.R',
+#                        '10.6_IVinaRegressionFramework.R')
+#               )
+# a=dlply(ex,.(r.file),.fun=function(x) RunStanGit(url.loc,dat.loc,r.file=x$r.file),.progress = 'text')
