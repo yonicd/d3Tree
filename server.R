@@ -5,6 +5,7 @@ shinyServer(function(input, output, session) {
   })
   
   output$d3 <- reactive({
+    m=structure.list[[input$m]]
     if(is.null(input$Hierarchy)){
       p=m
     }else{
@@ -14,6 +15,7 @@ shinyServer(function(input, output, session) {
     list(root = df2tree(p), layout = 'collapse')})
   
   output$table <- DT::renderDataTable(expr = {
+    m=structure.list[[input$m]]
     df=m
     if(is.null(input$.nodesData)){
       df=m
@@ -22,6 +24,9 @@ shinyServer(function(input, output, session) {
       if(!is.null(x.filter)) df=ddply(x.filter,.(id),function(a.x){m%>%filter_(.dots = list(a.x$x2))%>%distinct})
     }
     df=df%>%select(-c(id,value))%>%mutate_each(funs(factor))
+    
+    #x.out=read.stan(stan.data,df)%>%inner_join(df%>%select(-c(id,value)),by=c("MODEL","CHAIN","MEASURE","VARIABLE"))
+    
     return(df)
   },
     extensions = c('Buttons','Scroller','ColReorder','FixedColumns'), 
@@ -46,9 +51,8 @@ shinyServer(function(input, output, session) {
   
 
   output$Hierarchy <- renderUI({
-    nm=names(m)
-    ch=c("Cylinders","VS","AM","Carborators")
-    Hierarchy=split(nm[-length(nm)],factor(ch,levels=ch))
+    Hierarchy=names(structure.list[[input$m]])
+    Hierarchy=Hierarchy[-length(Hierarchy)]
     selectInput("Hierarchy","Tree Hierarchy",choices = Hierarchy,multiple=T,selected = Hierarchy)
   })
   

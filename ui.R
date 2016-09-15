@@ -10,7 +10,10 @@ shinyUI(fluidPage(
   
   sidebarLayout(
     sidebarPanel(
-      
+      radioButtons("m", "Data",split(c('Titanic','StanModels','Stan'),
+                                     c('1. Titanic',
+                                       '2. Applied Regression Modeling: Full Tree',
+                                       '3. Applied Regression Modeling: Results')),selected = 'Titanic')
     ),
     
   mainPanel(

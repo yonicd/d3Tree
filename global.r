@@ -74,5 +74,14 @@ tree.filter=function(nodesList,m){
   return(active_filter)
 }
 
-m=mtcars%>%select(cyl,vs,am,carb)%>%mutate(value=NA)%>%distinct
+load('www/stan_output.rdata')
+
+data.list=list(Stan=stan.list,Titanic=Titanic)
+
+structure.list=list(
+                Titanic=Titanic%>%data.frame%>%mutate(value=NA)%>%distinct,
+                Stan=stan.out%>%select(Data,Model,Model.Eq,Chain,Measure,variable)%>%mutate(value=NA)%>%distinct,
+                StanModels=stan.models%>%mutate(value=NA)
+                )
+
 nodesList=list()
