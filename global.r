@@ -1,9 +1,12 @@
+#Load Libraries ----
+library(reshape2)
 library(shiny)
 library(stringr)
 library(DT)
 library(plyr)
 library(dplyr)
 
+#Function Calls for Creating and reading tree structure ----
 # recursive approach! http://stackoverflow.com/questions/12818864/how-to-write-to-json-with-children-from-r
 makeList <- function(x) {
   idx <- is.na(x[,2])
@@ -19,11 +22,12 @@ makeList <- function(x) {
 # thanks Jeroen http://stackoverflow.com/questions/19734412/flatten-nested-list-into-1-deep-list
 renquote <- function(l) if (is.list(l)) lapply(l, renquote) else enquote(l)
 
-
+#data.frame to json sent to JS code
 df2tree <- function(m) {
   list(name = "root", children = makeList(m))
 }
 
+#creates logial expression from tree structure
 tree.filter=function(nodesList,m){
   
   nodesdf=data.frame(rowname=names(nodesList),x=nodesList,stringsAsFactors = F)
@@ -74,14 +78,65 @@ tree.filter=function(nodesList,m){
   return(active_filter)
 }
 
+#Initialize empty node for d3 tree
+nodesList=list()
+str.out.global=c()
+df.global=c()
+
+#Run stan simulations ----
+source('RunStanGit.r')
+
+#Extract sim outputs from stan simulations ----
+stan.df.extract=function(a){
+    ldply(a,.fun=function(m){
+      ldply(m,.fun=function(stan.out){
+        x=attributes(stan.out)
+        x1=llply(x$sim$samples,attributes)
+        names(x1)=c(1:length(x1))
+        df.model=ldply(x1,.fun=function(x) do.call('cbind',x$sampler_params)%>%data.frame%>%mutate(Iter=1:nrow(.)),.id="Chain")
+        
+        df.samples=stan.out@sim$samples
+        names(df.samples)=c(1:length(df.samples))
+        df.samples=ldply(df.samples,.fun = function(y) data.frame(y)%>%mutate(Iter=1:nrow(.)),.id = 'Chain')
+        
+        df.model%>%left_join(df.samples,by=c('Chain','Iter'))
+      },.id = 'stan.obj.output')
+    },.id = 'r.files' )%>%rename(r.files=r.file)
+  }
+
+#create list for table view
+read.stan=function(stan.data,tree.df){
+  
+  stan.df=stan.df.extract(stan.data)%>%
+    mutate_each(funs(as.character),r.files,stan.obj.output)%>%
+    mutate_each(funs(as.numeric),-c(r.files,stan.obj.output))
+  
+  dlply(tree.df%>%mutate_each(funs(as.character),-Chain),.(stan.obj.output,Chain),.fun=function(df){
+    stan.df%>%filter(Chain%in%df$Chain&stan.obj.output%in%df$stan.obj.output)%>%
+      select_(.dots = c('Chain','Iter',df$variable))
+  })
+  
+}
+
+#Load static data ----
 load('www/stan_output.rdata')
 
 data.list=list(Stan=stan.list,Titanic=Titanic)
 
-structure.list=list(
-                Titanic=Titanic%>%data.frame%>%mutate(value=NA)%>%distinct,
-                Stan=stan.out%>%select(Data,Model,Model.Eq,Chain,Measure,variable)%>%mutate(value=NA)%>%distinct,
-                StanModels=stan.models%>%mutate(value=NA)
-                )
+stan.out=stan.models%>%
+  inner_join(stan.df.extract(stan.sim.output)%>%
+               ddply(.(r.files,stan.obj.output),.fun=function(y) y%>%melt(.,c('r.files','stan.obj.output','Chain','Iter'))%>%filter(!is.na(value)))%>%
+               select(-c(Iter,value))%>%
+               distinct,
+             by=c('r.files','stan.obj.output')
+  )%>%mutate(Measure=factor(gsub('[0-9.]','',variable)))
 
-nodesList=list()
+#Create list to populate d3 tree ----
+structure.list=list(
+  Titanic=Titanic%>%data.frame%>%mutate(value=NA)%>%distinct,
+  Stan=stan.out%>%mutate(value=NA)%>%distinct,
+  StanModels=stan.models%>%mutate(value=NA)
+)
+
+
+msg=c()
