@@ -3,6 +3,10 @@
 ### Overview
 D3js is a great tool to visualize complex data in a dynamic way. But what can be done beyond the visualization to allow it to be part of a workflow. We give an example of this by having the shiny server observe a d3 tree and its real-time layout. Using this information complex data structures, such as heirarchal simulations, complex design of clinical trials and results from ploycompartmental structural models can be mapped out *and filtered in a reactive manner* in through an intuitive and simple tool.
 
+## Active shiny filter of complex data structures using d3 trees
+### Overview
+D3js is a great tool to visualize complex data in a dynamic way. But what can be done beyond the visualization to allow it to be part of a workflow. We give an example of this by having the shiny server observe a d3 tree and its real-time layout. Using this information complex data structures, such as heirarchal simulations, complex design of clinical trials and results from ploycompartmental structural models can be mapped out *and filtered* in through an intuitive and simple tool.
+
 ### Examples
 
 ####Running the App through Github
