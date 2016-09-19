@@ -19,13 +19,16 @@ shinyServer(function(input, output, session) {
   })
   
   StanSelect=reactive({
-    # if(is.null(RunStan())){
-    #   
-    # }else{
-    #   read.stan(RunStan(),structure.list$Stan)
-    #   }
-    read.stan(stan.sim.output,TreeStruct())
-    
+# 
+#       if(is.null(RunStan()[['out']])){
+#         out=read.stan(stan.sim.output,TreeStruct())
+#       }else{
+#         out.list=RunStan()[['out']]
+#         out=list(stan.df.extract(out.list))
+#         names(out)=names(out.list)
+#       }
+    out=read.stan(stan.sim.output,TreeStruct())
+    return(out)
   })
   
   RunStan<-eventReactive(input$goButton,{
@@ -34,10 +37,14 @@ shinyServer(function(input, output, session) {
     ex$chapter=unlist(lapply(lapply(strsplit(ex$r.files,'[\\_]'),'[',1),function(x) paste('Ch',strsplit(x,'[\\.]')[[1]][1],sep='.')))
     ex$example=unlist(lapply(lapply(strsplit(ex$r.files,'[\\_]'),'[',1),function(x) strsplit(x,'[\\.]')[[1]][2]))
     
-    out=dlply(ex%>%slice(1),.(r.files),.fun=function(x) RunStanGit(url.loc='https://raw.githubusercontent.com/stan-dev/example-models/master/ARM/',
-                                                                 dat.loc=paste0(x$chapter,'/'),r.file=x$r.files),.progress = 'text')
+    out=dlply(ex%>%slice(1),.(r.files),.fun=function(x) {
+      RunStanGit(url.loc='https://raw.githubusercontent.com/stan-dev/example-models/master/ARM/',
+                 dat.loc=paste0(x$chapter,'/'),
+                 r.file=x$r.files)
+      },.progress = 'text')
+    out.global<<-out
     msg<-'Done'
-    msg
+    return(list(msg=msg,out=out))
   })
   
   output$d3 <- reactive({
@@ -85,7 +92,7 @@ shinyServer(function(input, output, session) {
   
   output$results2 <- renderPrint({
     str.out=''
-    if(!is.null(stan)) str.out=RunStan()
+    if(!is.null(stan)) str.out=RunStan()[['msg']]
     return(str.out)
   })
   
