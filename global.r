@@ -1,6 +1,7 @@
 #Load Libraries ----
 library(reshape2)
 library(shiny)
+library(shinyAce)
 library(stringr)
 library(DT)
 library(plyr)
@@ -69,12 +70,34 @@ tree.filter=function(nodesList,m){
     }
   })%>%arrange(node_id)%>%select(-d)%>%mutate_each(funs(as.character))
   
-  active_filter=y%>%mutate(id=cumsum(ifelse(parent_id==1,1,0)))%>%
-    group_by(id,node_name)%>%summarise(x1=paste0('c(',paste(paste0("'",node_data,"'"),collapse=","),')'))%>%
-    mutate(x1=paste(node_name,x1,sep="%in%"))%>%
-    group_by(id)%>%summarise(x2=paste("(",x1,")",collapse="&"))
+  # active_filter=y%>%mutate(id=cumsum(ifelse(parent_id==1,1,0)))%>%
+  #   group_by(id,node_name)%>%summarise(x1=paste0('c(',paste(paste0("'",node_data,"'"),collapse=","),')'))%>%
+  #   mutate(x1=paste(node_name,x1,sep="%in%"))%>%
+  #   group_by(id)%>%summarise(x2=paste("(",x1,")",collapse="&"))
+  
+  y$leaf=cumsum(as.numeric(!y$node_id%in%y$parent_id))*as.numeric(!y$node_id%in%y$parent_id)
+  
+  logics=vector('list',max(y$leaf))
+  names(logics)=1:max(y$leaf)
+  for(i in 1:max(y$leaf)){
+    x=c(y$node_id[y$leaf==i],y$parent_id[y$leaf==i])
+    repeat{
+      x=c(x,y$parent_id[y$node_id==x[length(x)]])
+      if(x[length(x)]=="1"){
+        break
+      }
+    }
+    logics[[i]]=x
+  }
+  
+  
+  active_filter=ldply(logics,.fun=function(x){ y%>%filter(node_id%in%x)%>%
+      mutate(l=paste0(node_name,"=='",node_data,"'"))%>%
+      summarise(x2=paste0(l,collapse="&"))},.id = "id")%>%mutate(id=as.character(id))
   
     }
+  
+
   return(active_filter)
 }
 
@@ -88,7 +111,7 @@ source('RunStanGit.r')
 
 #Extract sim outputs from stan simulations ----
 stan.df.extract=function(a){
-    ldply(a,.fun=function(m){
+    out=ldply(a,.fun=function(m){
       ldply(m,.fun=function(stan.out){
         x=attributes(stan.out)
         x1=llply(x$sim$samples,attributes)
@@ -101,7 +124,12 @@ stan.df.extract=function(a){
         
         df.model%>%left_join(df.samples,by=c('Chain','Iter'))
       },.id = 'stan.obj.output')
-    },.id = 'r.files' )%>%rename(r.files=r.file)
+    },.id = 'r.files' )
+  
+  names(out)[names(out)=='r.file']='r.files'
+  
+  return(out)
+  
   }
 
 #create list for table view
@@ -111,9 +139,10 @@ read.stan=function(stan.data,tree.df){
     mutate_each(funs(as.character),r.files,stan.obj.output)%>%
     mutate_each(funs(as.numeric),-c(r.files,stan.obj.output))
   
-  dlply(tree.df%>%mutate_each(funs(as.character),-Chain),.(stan.obj.output,Chain),.fun=function(df){
-    stan.df%>%filter(Chain%in%df$Chain&stan.obj.output%in%df$stan.obj.output)%>%
-      select_(.dots = c('Chain','Iter',df$variable))
+  dlply(tree.df%>%mutate_each(funs(as.character),-Chain),.(stan.obj.output,Chain),
+        .fun=function(df){
+          stan.df%>%filter(Chain%in%df$Chain&stan.obj.output%in%df$stan.obj.output)%>%
+          select_(.dots = c('Chain','Iter',df$variable))
   })
   
 }
@@ -140,3 +169,4 @@ structure.list=list(
 
 
 msg=c()
+out.global=c()
