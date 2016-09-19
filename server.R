@@ -19,20 +19,17 @@ shinyServer(function(input, output, session) {
   })
   
   StanSelect=reactive({
-# 
-#       if(is.null(RunStan()[['out']])){
-#         out=read.stan(stan.sim.output,TreeStruct())
-#       }else{
-#         out.list=RunStan()[['out']]
-#         out=list(stan.df.extract(out.list))
-#         names(out)=names(out.list)
-#       }
-    out=read.stan(stan.sim.output,TreeStruct())
+    if(input$goButton==0){
+      out=read.stan(stan.sim.output,TreeStruct())
+    }else{
+      out.list=RunStan()[['out']]
+      out=list(stan.df.extract(out.list))
+      names(out)=names(out.list)
+    }
     return(out)
   })
   
   RunStan<-eventReactive(input$goButton,{
-
     ex=TreeStruct()%>%select(r.files)%>%mutate_each(funs(as.character))%>%unique
     ex$chapter=unlist(lapply(lapply(strsplit(ex$r.files,'[\\_]'),'[',1),function(x) paste('Ch',strsplit(x,'[\\.]')[[1]][1],sep='.')))
     ex$example=unlist(lapply(lapply(strsplit(ex$r.files,'[\\_]'),'[',1),function(x) strsplit(x,'[\\.]')[[1]][2]))
@@ -42,8 +39,8 @@ shinyServer(function(input, output, session) {
                  dat.loc=paste0(x$chapter,'/'),
                  r.file=x$r.files)
       },.progress = 'text')
-    out.global<<-out
     msg<-'Done'
+    structure.list$Stan<<-stan.tree.construct(out)%>%mutate(value=NA)%>%distinct
     return(list(msg=msg,out=out))
   })
   
@@ -91,9 +88,7 @@ shinyServer(function(input, output, session) {
   })
   
   output$results2 <- renderPrint({
-    str.out=''
-    if(!is.null(stan)) str.out=RunStan()[['msg']]
-    return(str.out)
+  RunStan()[['msg']]
   })
   
   output$Hierarchy <- renderUI({
@@ -103,8 +98,6 @@ shinyServer(function(input, output, session) {
     if(input$m=='Stan') Hierarchy=c('stan.obj.output','Chain','Measure','variable')
     selectInput("Hierarchy","Tree Hierarchy",choices = Hierarchy,multiple=T,selected = Hierarchy)
   })
-  
-
   
   output$TableView <- renderUI({
     nm=names(StanSelect())

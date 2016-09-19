@@ -20,7 +20,7 @@ shinyUI(fluidPage(
       radioButtons("m", "Data",split(c('Titanic','StanModels','Stan'),
                                      c('1. Titanic',
                                        '2. Applied Regression Modeling: Full Tree',
-                                       '3. Applied Regression Modeling: Results')),selected = 'Titanic')
+                                       '3. Applied Regression Modeling: Sim Output')),selected = 'Titanic')
     ),
     
   mainPanel(
@@ -35,7 +35,8 @@ shinyUI(fluidPage(
                   conditionalPanel('input.m=="StanModels"',
                                    column(6,actionButton("goButton", "Simulate Selection From Stan Repo"))
                   ),
-                  column(6,HTML("<div id=\"d3\" class=\"d3plot\"><svg /></div>"))
+                  column(6,HTML("<div id=\"d3\" class=\"d3plot\"><svg /></div>")),
+                  conditionalPanel('input.m=="StanModels"',column(6,verbatimTextOutput("results2")))
                   )
               ),
       tabPanel("Table",
@@ -43,12 +44,7 @@ shinyUI(fluidPage(
                           conditionalPanel('input.m=="Stan"',uiOutput('TableView')),
                           column(12,DT::dataTableOutput('table'))
                         )
-               ),
-            tabPanel("Simulation Output",
-               fluidPage(
-                 verbatimTextOutput("results2")
                )
-              )
     )
   )
 )

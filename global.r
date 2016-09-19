@@ -70,11 +70,6 @@ tree.filter=function(nodesList,m){
     }
   })%>%arrange(node_id)%>%select(-d)%>%mutate_each(funs(as.character))
   
-  # active_filter=y%>%mutate(id=cumsum(ifelse(parent_id==1,1,0)))%>%
-  #   group_by(id,node_name)%>%summarise(x1=paste0('c(',paste(paste0("'",node_data,"'"),collapse=","),')'))%>%
-  #   mutate(x1=paste(node_name,x1,sep="%in%"))%>%
-  #   group_by(id)%>%summarise(x2=paste("(",x1,")",collapse="&"))
-  
   y$leaf=cumsum(as.numeric(!y$node_id%in%y$parent_id))*as.numeric(!y$node_id%in%y$parent_id)
   
   logics=vector('list',max(y$leaf))
@@ -132,6 +127,16 @@ stan.df.extract=function(a){
   
   }
 
+stan.tree.construct=function(stan.sim.output){
+  stan.models%>%mutate_each(funs(as.character),r.files,stan.obj.output)%>%
+    inner_join(stan.df.extract(stan.sim.output)%>%
+                 ddply(.(r.files,stan.obj.output),.fun=function(y) y%>%melt(.,c('r.files','stan.obj.output','Chain','Iter'))%>%filter(!is.na(value)))%>%
+                 select(-c(Iter,value))%>%
+                 distinct%>%mutate_each(funs(as.character),r.files,stan.obj.output),
+               by=c('r.files','stan.obj.output')
+    )%>%mutate(Measure=factor(gsub('[0-9.]','',variable)))
+}
+
 #create list for table view
 read.stan=function(stan.data,tree.df){
   
@@ -152,21 +157,11 @@ load('www/stan_output.rdata')
 
 data.list=list(Stan=stan.list,Titanic=Titanic)
 
-stan.out=stan.models%>%
-  inner_join(stan.df.extract(stan.sim.output)%>%
-               ddply(.(r.files,stan.obj.output),.fun=function(y) y%>%melt(.,c('r.files','stan.obj.output','Chain','Iter'))%>%filter(!is.na(value)))%>%
-               select(-c(Iter,value))%>%
-               distinct,
-             by=c('r.files','stan.obj.output')
-  )%>%mutate(Measure=factor(gsub('[0-9.]','',variable)))
-
 #Create list to populate d3 tree ----
 structure.list=list(
-  Titanic=Titanic%>%data.frame%>%mutate(value=NA)%>%distinct,
-  Stan=stan.out%>%mutate(value=NA)%>%distinct,
-  StanModels=stan.models%>%mutate(value=NA)
-)
-
+    Titanic=Titanic%>%data.frame%>%mutate(value=NA)%>%distinct,
+    StanModels=stan.models%>%mutate(value=NA)%>%distinct,
+    Stan=stan.tree.construct(stan.sim.output)%>%mutate(value=NA)%>%distinct)  
 
 msg=c()
 out.global=c()
