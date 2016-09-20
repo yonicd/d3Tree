@@ -81,6 +81,7 @@ $.extend(d3OutputBinding, {
 			  var nodes = tree.nodes(root).reverse(),
 			      links = tree.links(nodes);
 
+     
 			  // Normalize for fixed-depth.
 			  nodes.forEach(function(d) { d.y = d.depth * 90; });
 
@@ -162,12 +163,12 @@ $.extend(d3OutputBinding, {
 			    d.x0 = d.x;
 			    d.y0 = d.y;
 			  });
-			   
-			   //return data to shiny
-            var nodes1 = tree.nodes(root);
-            console.log(nodes1);
-            Shiny.onInputChange("nodesData", JSON.decycle(nodes1));
 			  
+			       //return data to shiny
+			       var nodes1 = tree.nodes(root);
+            Shiny.onInputChange(".nodesData", JSON.decycle(nodes1));
+            Shiny.onInputChange(".linksData", JSON.decycle(links));
+            
 			} // end of update() function
 
 			root.children.forEach(collapse);

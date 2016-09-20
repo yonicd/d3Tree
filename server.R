@@ -104,5 +104,4 @@ shinyServer(function(input, output, session) {
     selectInput("TableView","Stan Output",choices = nm,multiple=F,selected = nm[1])
   })
   
-
 })
