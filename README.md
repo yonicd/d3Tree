@@ -1,11 +1,9 @@
 # SearchTree
 ## Reactive shiny filters through collapsible d3js trees
 ### Overview
-D3js is a great tool to visualize complex data in a dynamic way. But what can be done beyond the visualization to allow it to be part of a workflow. We give an example of this by having the shiny server observe a d3 tree and its real-time layout. Using this information complex data structures, such as heirarchal simulations, complex design of clinical trials and results from ploycompartmental structural models can be mapped out *and filtered in a reactive manner* through an intuitive and simple tool.
+D3js is a great tool to visualize complex data in a dynamic way. But how can the visualization be part of the natural workflow? 
 
-## Active shiny filter of complex data structures using d3 trees
-### Overview
-D3js is a great tool to visualize complex data in a dynamic way. But what can be done beyond the visualization to allow it to be part of a workflow. We give an example of this by having the shiny server observe a d3 tree and its real-time layout. Using this information complex data structures, such as heirarchal simulations, complex design of clinical trials and results from ploycompartmental structural models can be mapped out *and filtered* in through an intuitive and simple tool.
+Through Shiny we let the server observe the d3 [collapsible tree library](https://bl.ocks.org/mbostock/4339083) and its real-time layout. The data transferred  back to Shiny can be mapped to a series of logial expressions to create reactive filters. This allows for complex data structures, such as heirarchal simulations, complex design of clinical trials and results from ploycompartmental structural models to be visually represented and *filtered in a reactive manner* through an intuitive and simple tool.
 
 ### Examples
 
@@ -21,7 +19,7 @@ shiny::runGitHub("yonicd/SearchTree")
 ```
 
 #### Titanic
-Basic example of how the tree works and filtering the data.frame in shiny to set up the real example for the stan.
+Let's start with a popular data.frame, the Titanic data
 
 #### STAN
 After getting the hang of how the tool works lets test it out on a real problem. For those of us who are familiar with MCMC simulators (such as BUGS, WinBUGS, JAGS and STAN) we know that simulation results can scale up in a hurry. For each simulation there are chains, burn ins, priors, posteriors etc. Comparing between different simulations is a task that becomes a labor intensive excercise. A great example of an online source for different model examples is the [STAN github example repository](https://github.com/stan-dev/example-models), in it there are full examples coded with all the data files needed to run it locally on your own station all you need to do is fork it and go at it. We will focus on the book by Gelman and Hill [Data Analysis Using Regression Analysis and Multilevel/Hierarchical Models](http://www.stat.columbia.edu/~gelman/arm/) which has a vast amount of ARM models coded in STAN and R. 

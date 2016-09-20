@@ -34,7 +34,7 @@ shinyServer(function(input, output, session) {
     ex$chapter=unlist(lapply(lapply(strsplit(ex$r.files,'[\\_]'),'[',1),function(x) paste('Ch',strsplit(x,'[\\.]')[[1]][1],sep='.')))
     ex$example=unlist(lapply(lapply(strsplit(ex$r.files,'[\\_]'),'[',1),function(x) strsplit(x,'[\\.]')[[1]][2]))
     
-    out=dlply(ex%>%slice(1),.(r.files),.fun=function(x) {
+    out=dlply(ex,.(r.files),.fun=function(x) {
       RunStanGit(url.loc='https://raw.githubusercontent.com/stan-dev/example-models/master/ARM/',
                  dat.loc=paste0(x$chapter,'/'),
                  r.file=x$r.files)
@@ -69,7 +69,6 @@ shinyServer(function(input, output, session) {
     extensions = c('Buttons','Scroller','ColReorder','FixedColumns'), 
     filter='top',
     options = list(   deferRender = TRUE,
-                      dom='t',
                       scrollX = TRUE,
                       pageLength = 50,
                       scrollY = 500,

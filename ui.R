@@ -1,12 +1,12 @@
 shinyUI(fluidPage(
   
   tags$head(
-    tags$script(type="text/javascript", src = "d3.v3.js"),
-    tags$script(type="text/javascript", src ="d3.tip.js"),
-    tags$script(type="text/javascript", src ="ggtree.js"),
-    tags$script(type="text/javascript", src ="cycle.js"),
-    tags$script(type="text/javascript", src = "busy.js"),
-    tags$link(rel = 'stylesheet', type = 'text/css', href = 'ggtree.css')
+    tags$script(type="text/javascript", src = "css/d3.v3.js"),
+    tags$script(type="text/javascript", src = "css/d3.tip.js"),
+    tags$script(type="text/javascript", src = "css/ggtree.js"),
+    tags$script(type="text/javascript", src = "css/cycle.js"),
+    tags$script(type="text/javascript", src = "css/busy.js"),
+    tags$link(rel = 'stylesheet', type = 'text/css', href = 'css/ggtree.css')
   ),
   
   div(class = "busy",
@@ -20,7 +20,7 @@ shinyUI(fluidPage(
       radioButtons("m", "Data",split(c('Titanic','StanModels','Stan'),
                                      c('1. Titanic',
                                        '2. Applied Regression Modeling: Full Tree',
-                                       '3. Applied Regression Modeling: Sim Output')),selected = 'Titanic')
+                                       '3. Applied Regression Modeling: Sim Output')),selected = 'StanModels')
     ),
     
   mainPanel(
