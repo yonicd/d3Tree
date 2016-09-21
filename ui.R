@@ -16,13 +16,13 @@ shinyUI(fluidPage(
   
   headerPanel("Tree Search"),
   
-    sidebarPanel(width=3,
+    sidebarPanel(width=4,
       radioButtons("m", "Data",split(c('Titanic','StanModels','Stan'),
                                      c('1. Titanic',
                                        '2. Applied Regression Modeling: Full Tree',
                                        '3. Applied Regression Modeling: Sim Output')),selected = 'StanModels'),
       conditionalPanel('input.m=="StanModels"',
-                       actionButton("goButton", "Simulate Selection From Stan Repo")
+                       actionButton("goButton", "Simulate Selection From GitHub")
       ),
       checkboxInput(inputId='showtbl',label = 'Show Filter Queries',value = F),
       conditionalPanel('input.m=="Stan"', uiOutput('TableView'),
