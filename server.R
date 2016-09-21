@@ -45,6 +45,20 @@ shinyServer(function(input, output, session) {
     return(list(msg=msg,out=out))
   })
   
+  RunShinyStan<-eventReactive(input$shinystan,{
+    if(input$goButton==0){
+      sim.output=stan.sim.output
+    }else{
+      sim.output=RunStan()[['out']]
+    }
+    
+    output.names=ldply(sim.output,.fun=function(x) data.frame(stan.obj.output=names(x)))
+    
+    df=output.names%>%filter(stan.obj.output==input$TableView)
+    check.global<<-df
+    launch_shinystan(sim.output[[df$r.files]][[df$stan.obj.output]])
+  })
+  
   output$d3 <- reactive({
     m=structure.list[[input$m]]
     if(is.null(input$Hierarchy)){
@@ -101,7 +115,31 @@ shinyServer(function(input, output, session) {
   
   output$TableView <- renderUI({
     nm=names(StanSelect())
-    selectInput("TableView","Stan Output",choices = nm,multiple=F,selected = nm[1])
+    selectInput("TableView","Stan Output Objects",choices = nm,multiple=F,selected = nm[1])
   })
+  
+  output$downloadSave <- downloadHandler(
+    filename = "StanOutput.RData",
+    content = function(con) {
+      
+      unpack.list <- function(object) {
+        for(.x in names(object)){
+          assign(value = object[[.x]], x=.x, envir = parent.frame())
+        }
+      }
+      
+      if(input$goButton==0){
+        shiny.output=stan.sim.output
+      }else{
+        shiny.output=RunStan()[['out']]
+      }
+      
+      ret.obj=as.character(unlist(lapply(shiny.output,names)))
+      
+      for(i in 1:length(shiny.output)) unpack.list(shiny.output[[i]])
+
+      save(list=ret.obj, file=con)
+    }
+  )
   
 })

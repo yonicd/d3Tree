@@ -2,6 +2,7 @@
 library(reshape2)
 library(shiny)
 library(shinyAce)
+library(shinystan)
 library(stringr)
 library(DT)
 library(plyr)
@@ -25,7 +26,9 @@ library(dplyr)
       )  
 #Initialize empty node for d3 tree ----
 nodesList=list()
+  
+#internal QC objects  
 str.out.global=c()
 df.global=c()
-msg=c()
 out.global=c()
+check.global=c()
