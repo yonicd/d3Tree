@@ -13,18 +13,20 @@ shinyUI(fluidPage(
       img(src="http://downgraf.com/wp-content/uploads/2014/09/01-progress.gif", height="100",width="100"),
       p("Simulating...")
   ),
-  
-  headerPanel("Tree Search"),
-  
-    sidebarPanel(width=4,
-      radioButtons("m", "Data",split(c('Titanic','StanModels','Stan'),
+  headerPanel("Reactive Tree Search"),
+    sidebarPanel(width=3,
+      a(img(src='http://metrumrg.com/assets/img/logo_bigger.png',align='left',width='100%'),href='http://metrumrg.com',target="_blank"),
+      hr(),
+      radioButtons("m", "Example Data",split(c('Titanic','StanModels','Stan'),
                                      c('1. Titanic',
                                        '2. Applied Regression Modeling: Full Tree',
                                        '3. Applied Regression Modeling: Sim Output')),selected = 'StanModels'),
-      conditionalPanel('input.m=="StanModels"',
-                       actionButton("goButton", "Simulate Selection From GitHub")
-      ),
+      hr(),
       checkboxInput(inputId='showtbl',label = 'Show Filter Queries',value = F),
+      hr(),
+      conditionalPanel('input.m=="StanModels"',
+                       actionButton("goButton", "Simulate From GitHub")
+      ),
       conditionalPanel('input.m=="Stan"', uiOutput('TableView'),
                        downloadButton('downloadSave', 'Export Stan Output')
                        # ,
