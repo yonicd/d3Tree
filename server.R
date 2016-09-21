@@ -20,12 +20,13 @@ shinyServer(function(input, output, session) {
   
   StanSelect=reactive({
     if(input$goButton==0){
-      out=read.stan(stan.sim.output,TreeStruct())
+      sim.output=stan.sim.output
     }else{
-      out.list=RunStan()[['out']]
-      out=list(stan.df.extract(out.list))
-      names(out)=names(out.list)
+      sim.output=RunStan()[['out']]
     }
+    
+    out=read.stan(sim.output,TreeStruct())
+    
     return(out)
   })
   
