@@ -18,10 +18,16 @@ RunStanGit=function(url.loc,dat.loc.in,r.file,flag=T){
     
     str.old=substr(y,x[1],x[2])
     str.change=strip.path(substr(y,x[1]+1,x[2]-1))
-    str.new=paste0('"',dat.loc,str.change,'"')
-    
-    str.out=gsub(str.old,str.new,y)
-    if(grepl('source',y)) str.out=paste0('unpack.list(RunStanGit(url.loc,dat.loc.in,"',str.change,'",flag=F))')
+
+    if(grepl('source',y)){ 
+      str.out=paste0('unpack.list(RunStanGit(url.loc,dat.loc.in,"',str.change,'",flag=F))')
+    }else{
+      str.new=paste0('"',dat.loc,str.change,'"')
+      file.name=gsub(' ','',strsplit(y,'<-|=')[[1]][1])
+      eval(parse(text=paste0(file.name,' <<- tempfile()')))
+      eval(parse(text=paste0('download.file(',str.new,',',file.name,',quiet = T,method="curl")')))
+      str.out=gsub(str.old,file.name,y)      
+    }
     str.out  
   }
   
@@ -29,8 +35,8 @@ RunStanGit=function(url.loc,dat.loc.in,r.file,flag=T){
   code.loc=paste0(dat.loc,r.file)
   
 #Read R code ----  
-  r.code=readLines(code.loc)
-
+  r.code=strsplit(gsub('\\r','',getURL(code.loc)[1]),'\\n')[[1]]
+  
 #Rewrite paths for source and read commands to url path ----
   for(i in which(grepl('read|source',r.code))) r.code[i]=setwd.url(r.code[i])
   stan.find=which(grepl('stan\\(',r.code))
@@ -57,7 +63,7 @@ RunStanGit=function(url.loc,dat.loc.in,r.file,flag=T){
         file.name=strip.path(substr(r.code[stan.find[i]],x[1]+1,x[2]-1))
         eval(parse(text=paste0(file.name,' <- tempfile()')))
         loc.file=paste0('"',dat.loc,file.name,'"')
-        eval(parse(text=paste0('download.file(',loc.file,',',file.name,',quiet = T)')))
+        eval(parse(text=paste0('download.file(',loc.file,',',file.name,',quiet = T,method="curl")')))
         to.unlink[i]=file.name
         r.code[stan.find[i]]=gsub(substr(r.code[stan.find[i]],x[1],x[2]),strip.path(substr(r.code[stan.find[i]],x[1]+1,x[2]-1)),r.code[stan.find[i]])
       }
@@ -82,13 +88,14 @@ RunStanGit=function(url.loc,dat.loc.in,r.file,flag=T){
   # ex=data.frame(r.file=c('10.4_LackOfOverlapWhenTreat.AssignmentIsUnknown.R',
   #                        '10.5_CasualEffectsUsingIV.R',
   #                        '10.6_IVinaRegressionFramework.R', #sourcing another file
-  #                        '3.1_OnePredictor.R'), #removing partial path to file
+  #                        '3.1_OnePredictor.R', #removing partial path to file
+  #                        '8.4_PredictiveSimulationToCheckFitOfTimeSeriesModels.R'), #removing echo call from readlines
   #               stringsAsFactors = F)
   # 
   # ex$chapter=unlist(lapply(lapply(strsplit(ex$r.file,'[\\_]'),'[',1),function(x) paste('Ch',strsplit(x,'[\\.]')[[1]][1],sep='.')))
   # ex$example=unlist(lapply(lapply(strsplit(ex$r.file,'[\\_]'),'[',1),function(x) strsplit(x,'[\\.]')[[1]][2]))
   # 
-  # a=dlply(ex%>%slice(c(1)),.(r.file),.fun=function(x) RunStanGit(url.loc,dat.loc=paste0(x$chapter,'/'),r.file=x$r.file),.progress = 'text')
+  # a=dlply(ex%>%slice(c(3)),.(r.file),.fun=function(x) RunStanGit(url.loc,dat.loc=paste0(x$chapter,'/'),r.file=x$r.file),.progress = 'text')
 #
 # Functions to read output into nested list structure with data.frame in leaf
   # stan.sim.out=llply(a,.fun=function(m){

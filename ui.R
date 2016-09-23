@@ -1,3 +1,5 @@
+source('/data/shiny-server/SearchTree/global.r')
+
 shinyUI(fluidPage(
   
   tags$head(
@@ -15,7 +17,7 @@ shinyUI(fluidPage(
   ),
   headerPanel("Reactive Tree Search"),
     sidebarPanel(width=3,
-      a(img(src='http://metrumrg.com/assets/img/logo_bigger.png',align='left',width='100%'),href='http://metrumrg.com',target="_blank"),
+      a(img(src='http://metrumrg.com/assets/img/logo_bigger.png',align='left',width='100%'),href='http://metrumrg.com/opensourcetools.html',target="_blank"),
       hr(),
       radioButtons("m", "Example Data",split(c('Titanic','StanModels','Stan'),
                                      c('1. Titanic',
@@ -23,35 +25,42 @@ shinyUI(fluidPage(
                                        '3. Applied Regression Modeling: Sim Output')),selected = 'StanModels'),
       hr(),
       checkboxInput(inputId='showtbl',label = 'Show Filter Queries',value = F),
+      conditionalPanel('input.showtbl',p('Reactive Filters'),uiOutput("filterPrint")),
       hr(),
       conditionalPanel('input.m=="StanModels"',
                        actionButton("goButton", "Simulate From GitHub")
+                       
       ),
+      conditionalPanel('input.goButton==1',
+                              uiOutput("SimPrint")
+             ),
       conditionalPanel('input.m=="Stan"', uiOutput('TableView'),
+                       # actionButton('shinystan','Launch Shiny Stan'),
                        downloadButton('downloadSave', 'Export Stan Output')
-                       # ,
-                       #                    actionButton('shinystan','Launch Shiny Stan')
                        )
     ),
     
   mainPanel(
     tabsetPanel(
-      tabPanel("Layout Tree Filter",  
+      tabPanel("Tree Filter",  
                fluidPage(
                   fluidRow(
                   column(6,uiOutput("Hierarchy"))
                   ),
-                  column(6,HTML("<div id=\"d3\" class=\"d3plot\"><svg /></div>")),
-                  column(6,conditionalPanel('input.showtbl',p('Reactive Filters'),
-                                                            verbatimTextOutput("results")
-                                            ),
-                           conditionalPanel('input.goButton==1',
-                                            p('Simulation Console Output'),
-                                            verbatimTextOutput("results2"))
-                         )
+                  column(6,HTML("<div id=\"d3\" class=\"d3plot\"><svg /></div>"))
                   )
               ),
-      tabPanel("Table",
+      tabPanel("View Simulation Code",
+               fluidPage(
+                 
+                 column(6,uiOutput('getRScriptShow'),
+                          uiOutput("RCodePrint")),
+                 
+                 column(6,uiOutput('getStanScriptShow'),
+                        uiOutput("StanCodePrint"))
+               )
+      ),
+      tabPanel("Reactive Table",
                fluidPage(
                           column(12,DT::dataTableOutput('table'))
                         )

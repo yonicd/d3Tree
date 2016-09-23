@@ -7,8 +7,10 @@
     library(plyr)
     library(dplyr)
 
+    homeDir='/data/shiny-server/SearchTree/TitanicExample/'
+    
   #reading in and creating d3 tree
-    source('www/Functions/d3TreeFunctions.r')
+    source(paste0(homeDir,'www/functions/d3TreeFunctions.r'))
   
   #Initialize empty node for d3 tree
     nodesList=list()

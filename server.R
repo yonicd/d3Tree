@@ -71,17 +71,17 @@ shinyServer(function(input, output, session) {
     })
   
   output$table <- DT::renderDataTable(expr = {
-    
+
     if(input$m=='Stan') {
       x.out=StanSelect()[[input$TableView]]
       x.out=x.out[,!apply(x.out,2,function(x) all(is.na(x)))]
     }else{
         x.out=TreeStruct()
     }
-    
+
     return(x.out)
   },
-    extensions = c('Buttons','Scroller','ColReorder','FixedColumns'), 
+    extensions = c('Buttons','Scroller','ColReorder','FixedColumns'),
     filter='top',
     options = list(   deferRender = TRUE,
                       scrollX = TRUE,
@@ -94,15 +94,63 @@ shinyServer(function(input, output, session) {
                       buttons = c('copy', 'csv', 'excel', 'pdf', 'print','colvis'))
   )
 
-  output$results <- renderPrint({
+  output$filterPrint=renderUI({
     str.out=''
     if(!is.null(input$.nodesData)) str.out=tree.filter(input$.nodesData,m)
     str.out.global<<-str.out
-    return(str.out)
+    junk=textConnection(capture.output(str.out[['x2']]))
+    toace=paste0(readLines(junk),collapse='\n')
+    aceEditor(outputId = "code",value=toace,mode = "r", theme = "chrome", height = "100px", fontSize = 12)
+  })
+    
+  output$SimPrint <- renderUI({
+    junk=textConnection(capture.output(RunStan()[['msg']]))
+    toace=paste0(readLines(junk),collapse='\n')
+    aceEditor(outputId = "codeout",value=toace,mode = "r", theme = "chrome", height = "200px", fontSize = 12)
+  })
+
+  getRScripts=reactive({
+    dlply(TreeStruct(),.(r.files),.fun=function(x){
+      url.loc='https://raw.githubusercontent.com/stan-dev/example-models/master/ARM/'
+      dat.loc=unique(paste0('Ch.',as.character(x$chapter),'/'))
+      dat.loc=paste0(url.loc,dat.loc)
+      code.loc=unique(paste0(dat.loc,as.character(x$r.file)))
+      r.code=strsplit(gsub('\\r','',getURL(code.loc)[1]),'\\n')[[1]]
+      return(r.code)
+    })
   })
   
-  output$results2 <- renderPrint({
-  RunStan()[['msg']]
+  getStanScripts=reactive({
+    dlply(TreeStruct()%>%filter(r.files==input$getRScriptShow),.(stan.files),.fun=function(x){
+      url.loc='https://raw.githubusercontent.com/stan-dev/example-models/master/ARM/'
+      dat.loc=unique(paste0('Ch.',as.character(x$chapter),'/'))
+      dat.loc=paste0(url.loc,dat.loc)
+      code.loc=unique(paste0(dat.loc,as.character(x$stan.files)))
+      stan.code=strsplit(gsub('\\r','',getURL(code.loc)[1]),'\\n')[[1]]
+      return(stan.code)
+    })
+  })
+  
+  output$getRScriptShow=renderUI({
+    nm=names(getRScripts())
+    selectInput("getRScriptShow","R Script",choices = nm,multiple=F,selected = nm[1])
+  })
+    
+  output$getStanScriptShow=renderUI({
+    nm=names(getStanScripts())
+    selectInput("getStanScriptShow","Stan Script",choices = nm,multiple=F,selected = nm[1])
+  })
+  
+  output$RCodePrint <- renderUI({
+    junk=textConnection(getRScripts()[[input$getRScriptShow]])
+    toace=paste0(readLines(junk),collapse='\n')
+    aceEditor(outputId = "code3",value=toace,mode = "r", theme = "chrome", height = "800px", fontSize = 12)
+  })
+  
+  output$StanCodePrint <- renderUI({
+    junk=textConnection(getStanScripts()[[input$getStanScriptShow]])
+    toace=paste0(readLines(junk),collapse='\n')
+    aceEditor(outputId = "code4",value=toace,mode = "r", theme = "chrome", height = "800px", fontSize = 12)
   })
   
   output$Hierarchy <- renderUI({

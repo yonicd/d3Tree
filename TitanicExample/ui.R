@@ -1,3 +1,5 @@
+source('/data/shiny-server/SearchTree/TitanicExample/global.r')
+
 shinyUI(fluidPage(
   
   tags$head(

@@ -1,22 +1,25 @@
 #Load Libraries ----
+.libPaths('/data/lib')
 library(reshape2)
+library(RCurl)
 library(shiny)
 library(shinyAce)
-library(shinystan)
 library(stringr)
 library(DT)
 library(plyr)
 library(dplyr)
 
+homeDir='/data/shiny-server/SearchTree/'
+
 #Source Functions----
   #reading in and creating d3 tree
-    source('www/functions/d3TreeFunctions.r')
+    source(paste0(homeDir,'www/functions/d3TreeFunctions.r'))
   #Run stan simulations
-    source('www/functions/RunStanGit.r')
+    source(paste0(homeDir,'www/functions/RunStanGit.r'))
   #Extract sim outputs from stan simulations
-    source('www/functions/StanFunctions.r')
+    source(paste0(homeDir,'www/functions/StanFunctions.r'))
 #Load static data ----
-  load('www/stan_output.rdata')
+  load(paste0(homeDir,'www/stan_output.rdata'))
   data.list=list(Stan=stan.list,Titanic=Titanic)
 #Create list to populate d3 tree ----
   structure.list=list(
