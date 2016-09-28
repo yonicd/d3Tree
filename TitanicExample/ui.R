@@ -21,7 +21,7 @@ shinyUI(fluidPage(
                       )
              ),
     tabPanel("Reactive Table",
-              column(12,DT::dataTableOutput('table'))
+              column(12,tableOutput('table'))
               )
   )
 )

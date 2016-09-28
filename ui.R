@@ -19,6 +19,7 @@ shinyUI(fluidPage(
     sidebarPanel(width=3,
       a(img(src='http://metrumrg.com/assets/img/logo_bigger.png',align='left',width='100%'),href='http://metrumrg.com/opensourcetools.html',target="_blank"),
       hr(),
+      #verbatimTextOutput("holdOut"),
       radioButtons("m", "Example Data",split(c('Titanic','StanModels','Stan'),
                                      c('1. Titanic',
                                        '2. Applied Regression Modeling: Full Tree',
@@ -45,7 +46,10 @@ shinyUI(fluidPage(
       tabPanel("Tree Filter",  
                fluidPage(
                   fluidRow(
-                  column(6,uiOutput("Hierarchy"))
+                  column(6,uiOutput("Hierarchy")
+                         #,
+                         #verbatimTextOutput("clientdataText")
+                         )
                   ),
                   column(6,HTML("<div id=\"d3\" class=\"d3plot\"><svg /></div>"))
                   )
@@ -62,7 +66,7 @@ shinyUI(fluidPage(
       ),
       tabPanel("Reactive Table",
                fluidPage(
-                          column(12,DT::dataTableOutput('table'))
+                          column(12,tableOutput('table'))
                         )
                )
     )

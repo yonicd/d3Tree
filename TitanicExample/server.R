@@ -27,20 +27,21 @@ shinyServer(function(input, output, session) {
     list(root = df2tree(p), layout = 'collapse')
     })
   
-  output$table <- DT::renderDataTable(expr = {
+  output$table <- renderTable(expr = {
         TreeStruct()%>%select(-value)
-  },
-    extensions = c('Buttons','Scroller','ColReorder','FixedColumns'), 
-    filter='top',
-    options = list(   deferRender = TRUE,
-                      scrollX = TRUE,
-                      pageLength = 50,
-                      scrollY = 500,
-                      scroller = TRUE,
-                      dom = 'Bfrtip',
-                      colReorder=TRUE,
-                      fixedColumns = TRUE,
-                      buttons = c('copy', 'csv', 'excel', 'pdf', 'print','colvis'))
+  }
+  #,
+    # extensions = c('Buttons','Scroller','ColReorder','FixedColumns'), 
+    # filter='top',
+    # options = list(   deferRender = TRUE,
+    #                   scrollX = TRUE,
+    #                   pageLength = 50,
+    #                   scrollY = 500,
+    #                   scroller = TRUE,
+    #                   dom = 'Bfrtip',
+    #                   colReorder=TRUE,
+    #                   fixedColumns = TRUE,
+    #                   buttons = c('copy', 'csv', 'excel', 'pdf', 'print','colvis'))
   )
 
   output$results <- renderPrint({
