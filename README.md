@@ -2,7 +2,9 @@
 title: "Reactive shiny filters through collapsible d3js trees"
 author: 'Jonathan Sidi, <a href="http://metrumrg.com/opensourcetools.html" target="_blank">Metrum Research Group</a>'
 date: "September 20, 2016"
-output: html_document
+output:
+  html_document:
+    self_contained: false
 ---
 
 ### Overview

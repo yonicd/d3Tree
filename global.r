@@ -1,5 +1,10 @@
 #Load Libraries ----
-.libPaths('/data/jonathans/script/lib')
+homDir=''
+if(dir.exists('/data/jonathans')){
+  .libPaths('/data/jonathans/script/lib')  
+  homeDir='/data/shiny-server/SearchTree/'
+}
+
 library(reshape2)
 library(RCurl)
 library(shiny)
@@ -9,7 +14,7 @@ library(DT)
 library(plyr)
 library(dplyr)
 
-homeDir='/data/shiny-server/SearchTree/'
+
 
 #Source Functions----
   #reading in and creating d3 tree
