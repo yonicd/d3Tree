@@ -54,8 +54,9 @@ shinyServer(function(input, output, session) {
   output$Hierarchy <- renderUI({
     Hierarchy=names(m)
     Hierarchy=Hierarchy[-length(Hierarchy)]
-    selectInput("Hierarchy","Tree Hierarchy",
-                choices = Hierarchy,multiple=T,selected = Hierarchy)
+    selectizeInput("Hierarchy","Tree Hierarchy",
+                choices = Hierarchy,multiple=T,selected = Hierarchy,
+                options=list(plugins=list('drag_drop','remove_button')))
   })
   
 })

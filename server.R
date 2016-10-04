@@ -168,7 +168,8 @@ shinyServer(function(input, output, session) {
     Hierarchy=Hierarchy[-length(Hierarchy)]
     Hierarchy=Hierarchy[!(Hierarchy%in%c("stan.obj.output","model.eq"))]
     if(input$m=='Stan') Hierarchy=c('stan.obj.output','Chain','Measure','variable')
-    selectInput("Hierarchy","Tree Hierarchy",choices = Hierarchy,multiple=T,selected = Hierarchy)
+    selectizeInput("Hierarchy","Tree Hierarchy",choices = Hierarchy,multiple=T,selected = Hierarchy,
+                   options=list(plugins=list('drag_drop','remove_button')))
   })
   
   output$TableView <- renderUI({

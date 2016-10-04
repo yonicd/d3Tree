@@ -102,9 +102,10 @@ $.extend(d3OutputBinding, {
 			      .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
 
 			  nodeEnter.append("text")
-			      .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
-			      .attr("dy", ".35em")
-			      .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
+			      //.attr("x", function(d) { return d.children || d._children ? 10 : 10; })
+			      .attr("dy", "0.35em")
+			      //.attr("transform", "rotate(10)")
+			      //.attr("text-anchor", function(d) { return d.children || d._children ? "start" : "start"; })
 			      .text(function(d) { return d.name; })
 			      .style("fill-opacity", 1e-6);
 
@@ -118,7 +119,14 @@ $.extend(d3OutputBinding, {
 			      .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
 
 			  nodeUpdate.select("text")
-			      .style("fill-opacity", 1);
+            .style("fill-opacity", 1)
+            .attr("text-anchor", function(d) { 
+                  return d.children ? "end" : "start"; 
+                 })
+            .attr("transform", function(d) {return d.children ? "rotate(20)":"rotate(0)"})
+            .attr("x", function(d) { 
+                  return d.children ? -10 : 10;
+                });
 
 			  // Transition exiting nodes to the parent's new position.
 			  var nodeExit = node.exit().transition()
