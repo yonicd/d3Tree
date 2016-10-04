@@ -1,4 +1,4 @@
-source('/data/shiny-server/SearchTree/global.r')
+#source('/data/shiny-server/SearchTree/global.r')
 
 shinyUI(fluidPage(
   
