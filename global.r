@@ -1,6 +1,6 @@
 #Load Libraries ----
 homDir=''
-if(dir.exists('/data/jonathans')){
+if(dir.exists('/data/jonathans/script/lib')){
   .libPaths('/data/jonathans/script/lib')  
   homeDir='/data/shiny-server/SearchTree/'
 }
