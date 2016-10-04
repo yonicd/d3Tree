@@ -1,4 +1,4 @@
-source('/data/shiny-server/SearchTree/TitanicExample/global.r')
+#source('/data/shiny-server/SearchTree/TitanicExample/global.r')
 
 shinyUI(fluidPage(
   
