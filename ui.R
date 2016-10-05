@@ -64,7 +64,7 @@ shinyUI(fluidPage(
       ),
       tabPanel("Reactive Table",
                fluidPage(
-                          column(12,tableOutput('table'))
+                          column(12,dataTableOutput('table'))
                         )
                )
     )

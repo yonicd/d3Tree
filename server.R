@@ -74,7 +74,7 @@ shinyServer(function(input, output, session) {
     list(root = df2tree(p), layout = 'collapse')
     })
   
-  output$table <- renderTable(expr = {
+  output$table <- renderDataTable(expr = {
 
     if(input$m=='Stan') {
       x.out=StanSelect()[[input$TableView]]
@@ -85,18 +85,18 @@ shinyServer(function(input, output, session) {
 
     x.out
   }
-  # ,
-  #   extensions = c('Buttons','Scroller','ColReorder','FixedColumns'),
-  #   filter='top',
-  #   options = list(   deferRender = TRUE,
-  #                     scrollX = TRUE,
-  #                     pageLength = 50,
-  #                     scrollY = 500,
-  #                     scroller = TRUE,
-  #                     dom = 'Bfrtip',
-  #                     colReorder=TRUE,
-  #                     fixedColumns = TRUE,
-  #                     buttons = c('copy', 'csv', 'excel', 'pdf', 'print','colvis'))
+  ,
+    extensions = c('Buttons','Scroller','ColReorder','FixedColumns'),
+    filter='top',
+    options = list(   deferRender = TRUE,
+                      scrollX = TRUE,
+                      pageLength = 50,
+                      scrollY = 500,
+                      scroller = TRUE,
+                      dom = 'Bfrtip',
+                      colReorder=TRUE,
+                      fixedColumns = TRUE,
+                      buttons = c('copy', 'csv', 'excel', 'pdf', 'print','colvis'))
   )
 
   output$filterPrint=renderUI({
