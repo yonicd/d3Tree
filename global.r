@@ -15,7 +15,7 @@ source('www/functions/d3TreeFunctions.r')
 source('www/functions/RunStanGit.r')
 source('www/functions/StanFunctions.r')
 #Load static data ----
-  load(paste0(homeDir,'www/stan_output.rdata'))
+  load('www/stan_output.rdata')
   data.list=list(Stan=stan.list,Titanic=Titanic)
   
 
