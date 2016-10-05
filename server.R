@@ -4,11 +4,6 @@ shinyServer(function(input, output, session) {
     nodesList<<-input$.nodesData
   })
 
-  blogHold <- reactive({
-    cdata <- session$clientData
-    if(cdata$url_hostname=='i-7e07c5d1.metworx.com') 2
-  })
-
   TreeStruct=reactive({
     m=structure.list[[input$m]]
     df=m
@@ -40,7 +35,7 @@ shinyServer(function(input, output, session) {
     ex$chapter=unlist(lapply(lapply(strsplit(ex$r.files,'[\\_]'),'[',1),function(x) paste('Ch',strsplit(x,'[\\.]')[[1]][1],sep='.')))
     ex$example=unlist(lapply(lapply(strsplit(ex$r.files,'[\\_]'),'[',1),function(x) strsplit(x,'[\\.]')[[1]][2]))
     
-    if(blogHold()-input$goButton>0){
+    if(input$goButton>0){
     out=dlply(ex,.(r.files),.fun=function(x) {
       RunStanGit(url.loc='https://raw.githubusercontent.com/stan-dev/example-models/master/ARM/',
                  dat.loc=paste0(x$chapter,'/'),

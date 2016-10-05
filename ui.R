@@ -1,5 +1,3 @@
-#source('/data/shiny-server/SearchTree/global.r')
-
 shinyUI(fluidPage(
   
   tags$head(
