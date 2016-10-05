@@ -129,7 +129,7 @@ $(document).ready(function () {
 <div id="running-the-app-through-github" class="section level4">
 <h4>Running the App through <a href="https://github.com/metrumresearchgroup/SearchTree" target="_blank">Github</a></h4>
 <pre><code>#check to see if libraries need to be installed
-libs=c(&quot;rstan&quot;,&quot;shiny&quot;,&quot;shinyAce&quot;,&quot;reshape2&quot;,&quot;stringr&quot;,&quot;DT&quot;,&quot;plyr&quot;,&quot;dplyr&quot;)
+libs=c(&quot;rstan&quot;,&quot;shiny&quot;,&quot;shinyAce&quot;,&quot;RCurl&quot;,&quot;reshape2&quot;,&quot;stringr&quot;,&quot;DT&quot;,&quot;plyr&quot;,&quot;dplyr&quot;)
 x=sapply(libs,function(x)if(!require(x,character.only = T,warn.conflicts = F,quietly = T)) install.packages(x));rm(x,libs)
 
 #run App

@@ -19,7 +19,7 @@ Through Shiny we let the server observe the d3 <a href="https://bl.ocks.org/mbos
 ####Running the App through <a href="https://github.com/metrumresearchgroup/SearchTree" target="_blank">Github</a>
 ```
 #check to see if libraries need to be installed
-libs=c("rstan","shiny","shinyAce","reshape2","stringr","DT","plyr","dplyr")
+libs=c("rstan","shiny","shinyAce","RCurl","reshape2","stringr","DT","plyr","dplyr")
 x=sapply(libs,function(x)if(!require(x,character.only = T,warn.conflicts = F,quietly = T)) install.packages(x));rm(x,libs)
 
 #run App
