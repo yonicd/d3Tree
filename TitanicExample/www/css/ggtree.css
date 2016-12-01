@@ -1,24 +1,26 @@
 /* all credit to Mike Bostock -- http://bl.ocks.org/mbostock/4339083 */
 
-.ggtree .node {
+.node {
   cursor: pointer;
-  font: 10px sans-serif;
 }
 
-.ggtree .node circle {
+.node circle {
   fill: #fff;
   stroke: steelblue;
   stroke-width: 1.5px;
 }
 
+.node {
+  font: 10px sans-serif;
+}
 
-.ggtree .link {
+.link {
   fill: none;
   stroke: #ccc;
   stroke-width: 1.5px;
 }
 
-div.busy {
+div.busy { 
   position:absolute;
   top: 2%;
   left: 83%;
