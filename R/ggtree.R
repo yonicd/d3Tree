@@ -5,15 +5,15 @@
 #' @import htmlwidgets
 #'
 #' @export
-ggtree <- function(message, width = NULL, height = NULL, elementId = NULL) {
+ggtree <- function(data, width = NULL, height = NULL, elementId = NULL) {
 
   # forward options using x
   x = list(
-    message = message
+    data = data
   )
 
   # create widget
-  htmlwidgets::createWidget(
+  hw <- htmlwidgets::createWidget(
     name = 'ggtree',
     x,
     width = width,
@@ -21,6 +21,8 @@ ggtree <- function(message, width = NULL, height = NULL, elementId = NULL) {
     package = 'SearchTree',
     elementId = elementId
   )
+
+  hw
 }
 
 #' Shiny bindings for ggtree

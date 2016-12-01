@@ -1,4 +1,8 @@
 dependencies:
+  - name: d3
+    version: 3.5.17
+    src: htmlwidgets/d3/dist
+    script: d3.min.js
   - name: cycle
     version: 0.0.1
     src: htmlwidgets/cycle
@@ -10,5 +14,4 @@ dependencies:
   - name: ggtree
     version: 0.0.1
     src: htmlwidgets/ggtree
-    script: ggtree.js
     stylesheet: ggtree.css
