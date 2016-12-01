@@ -172,10 +172,13 @@ HTMLWidgets.widget({
     			    d.y0 = d.y;
     			  });
 
-    			       //return data to shiny
-    			       var nodes1 = tree.nodes(root);
-                Shiny.onInputChange(".nodesData", JSON.decycle(nodes1));
-                Shiny.onInputChange(".linksData", JSON.decycle(links));
+			       //return data to shiny
+			       var nodes1 = tree.nodes(root);
+			       if(typeof(Shiny) !== "undefined"){
+                Shiny.onInputChange(el.id + "_update",{
+                  ".nodesData": JSON.decycle(nodes1)
+                });
+			       }
 
     			} // end of update() function
 

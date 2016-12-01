@@ -5,11 +5,16 @@
 #' @import htmlwidgets
 #'
 #' @export
-ggtree <- function(data, width = NULL, height = NULL, elementId = NULL) {
+ggtree <- function(
+  data,
+  name = "name",
+  width = NULL, height = NULL, elementId = NULL
+) {
 
   # forward options using x
   x = list(
-    data = data
+    data = data,
+    options = list(name = name)
   )
 
   # create widget

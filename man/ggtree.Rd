@@ -4,7 +4,8 @@
 \alias{ggtree}
 \title{<Add Title>}
 \usage{
-ggtree(data, width = NULL, height = NULL, elementId = NULL)
+ggtree(data, name = "name", width = NULL, height = NULL,
+  elementId = NULL)
 }
 \description{
 <Add Description>

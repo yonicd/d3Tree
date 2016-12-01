@@ -2,16 +2,19 @@ m=Titanic%>%data.frame%>%mutate(value=NA)%>%distinct
 
 shinyServer(function(input, output, session) {
 
-  observe({
-    nodesList<<-input$.nodesData
+  network <- reactiveValues()
+
+  observeEvent(input$d3_update,{
+    network$nodes <- unlist(input$d3_update$.nodesData)
+    str(network$nodes)
   })
 
   TreeStruct=reactive({
     df=m
-    if(is.null(input$.nodesData)){
+    if(is.null(network$nodes)){
       df=m
     }else{
-      x.filter=SearchTree:::tree.filter(input$.nodesData,m)
+      x.filter=SearchTree:::tree.filter(network$nodes,m)
       if(!is.null(x.filter)) df=ddply(x.filter,.(id),function(a.x){m%>%filter_(.dots = list(a.x$x2))%>%distinct})
     }
     df
@@ -46,7 +49,7 @@ shinyServer(function(input, output, session) {
 
   output$results <- renderPrint({
     str.out=''
-    if(!is.null(input$.nodesData)) str.out=SearchTree:::tree.filter(input$.nodesData,m)
+    if(!is.null(network$nodes)) str.out=SearchTree:::tree.filter(network$nodes,m)
     str.out.global<<-str.out
     return(str.out)
   })
