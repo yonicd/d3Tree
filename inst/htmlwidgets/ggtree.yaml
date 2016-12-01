@@ -1,7 +1,14 @@
-# (uncomment to add a dependency)
-# dependencies:
-#  - name:
-#    version:
-#    src:
-#    script:
-#    stylesheet:
+dependencies:
+  - name: cycle
+    version: 0.0.1
+    src: htmlwidgets/cycle
+    script: cycle.js
+  - name: d3-tip
+    version: 0.6.7
+    src: htmlwidgets/d3tip
+    script: d3.tip.js
+  - name: ggtree
+    version: 0.0.1
+    src: htmlwidgets/ggtree
+    script: ggtree.js
+    stylesheet: ggtree.css
