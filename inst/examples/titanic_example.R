@@ -9,7 +9,6 @@ tit_d3 <- list(
 ggtree(tit_d3)
 
 library(d3r)
-library(dplyr)
 
 ggtree(
   list(
@@ -19,5 +18,6 @@ ggtree(
     ),
     layout = "collapse"
   ),
-  name = "id"
+  name = "id",
+  value = "colname"
 )

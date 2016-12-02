@@ -7,14 +7,14 @@
 #' @export
 ggtree <- function(
   data,
-  name = "name",
+  name = "name", value = "value",
   width = NULL, height = NULL, elementId = NULL
 ) {
 
   # forward options using x
   x = list(
     data = data,
-    options = list(name = name)
+    options = list(name = name, value = value)
   )
 
   # create widget

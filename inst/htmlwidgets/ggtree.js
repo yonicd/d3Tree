@@ -12,20 +12,22 @@ HTMLWidgets.widget({
 
       renderValue: function(x) {
 
-    	    // remove the old graph
-    		var svg = d3.select(el).select("svg");
-    		svg.remove();
-
-    		svg.html("");
+  	    // remove the old graph
+    		d3.select(el).select("svg")
+    		  .remove()
+    		  .html("");
 
     		var data = x.data;
 
     		// Define some 'common' variables
     		var root = data['root'];
     		var layout = data['layout'];
+    		//  these are the names of the key for name and value
+    		var name_var = x.options.name ? x.options.name : "name";
+    		var value_var = x.options.value ? x.options.value : "value";
 
     		// Initialize tooltip
-    		tip = d3.tip().attr('class', 'd3-tip').html(function(d) { return "<p style=\"color: #000000; background-color: #ffffff\">" + d.value + "</p>"; });
+    		tip = d3.tip().attr('class', 'd3-tip').html(function(d) { return "<p style=\"color: #000000; background-color: #ffffff\">" + d[value_var] + "</p>"; });
 
     		if (layout == "collapse") {
 
@@ -106,7 +108,7 @@ HTMLWidgets.widget({
     			      .attr("dy", "0.35em")
     			      //.attr("transform", "rotate(10)")
     			      //.attr("text-anchor", function(d) { return d.children || d._children ? "start" : "start"; })
-    			      .text(function(d) { return d.name; })
+    			      .text(function(d) { return d[name_var]; })
     			      .style("fill-opacity", 1e-6);
 
     			  // Transition nodes to their new position.
@@ -229,7 +231,7 @@ HTMLWidgets.widget({
     		      .attr("dy", ".31em")
     		      .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
     		      .attr("transform", function(d) { return d.x < 180 ? "translate(8)" : "rotate(180)translate(-8)"; })
-    		      .text(function(d) { return d.name; });
+    		      .text(function(d) { return d[name_var]; });
 
     		  d3.select(self.frameElement).style("height", diameter - 150 + "px");
 
@@ -277,7 +279,7 @@ HTMLWidgets.widget({
     			      .attr("dx", function(d) { return d.children ? -8 : 8; })
     			      .attr("dy", 3)
     			      .attr("text-anchor", function(d) { return d.children ? "end" : "start"; })
-    			      .text(function(d) { return d.name; });
+    			      .text(function(d) { return d[name_var]; });
 
     			d3.select(self.frameElement).style("height", height + "px");
     		} //end of if else
