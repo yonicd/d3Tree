@@ -38,8 +38,12 @@ HTMLWidgets.widget({
     			root.x0 = height / 2;
     			root.y0 = 0;
 
-    			var i = 0,
-    			    duration = 750;
+  			  // bad idea I'm sure to use a function-wide counter like
+  			  //  this for a unique but do for now
+  			  //  revisit this;  at least better than the very commonly
+  			  //  used i which could easily blow up
+  			  var uniqueid = 0;
+    			var duration = 750;
 
     			var tree = d3.layout.tree()
     			    .size([height, width]);
@@ -89,7 +93,9 @@ HTMLWidgets.widget({
 
     			  // Update the nodes…
     			  var node = svg.selectAll("g.node")
-    			      .data(nodes, function(d) { return d.id || (d.id = ++i); });
+    			      .data(nodes, function(d) {
+    			        return d.uniqueid || (d.uniqueid = ++uniqueid);
+  			        });
 
     			  // Enter any new nodes at the parent's previous position.
     			  var nodeEnter = node.enter().append("g")
@@ -144,7 +150,7 @@ HTMLWidgets.widget({
 
     			  // Update the links…
     			  var link = svg.selectAll("path.link")
-    			      .data(links, function(d) { return d.target.id; });
+    			      .data(links, function(d) { return d.target.uniqueid; });
 
     			  // Enter any new links at the parent's previous position.
     			  link.enter().insert("path", "g")
