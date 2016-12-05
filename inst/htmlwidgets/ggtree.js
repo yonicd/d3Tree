@@ -94,7 +94,7 @@ HTMLWidgets.widget({
     			  // Update the nodes…
     			  var node = svg.selectAll("g.node")
     			      .data(nodes, function(d) {
-    			        return d.uniqueid || (d.uniqueid = ++uniqueid);
+    			        return d.id || (d.id = ++uniqueid);
   			        });
 
     			  // Enter any new nodes at the parent's previous position.
