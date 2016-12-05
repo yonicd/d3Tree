@@ -13,11 +13,9 @@ library(d3r)
 ggtree(
   list(
     root = d3r::d3_nest(
-      as.data.frame(Titanic),
-      value_cols = "Freq"
+      as.data.frame(Titanic)
     ),
     layout = "collapse"
   ),
-  name = "id",
   value = "colname"
 )

@@ -150,7 +150,7 @@ HTMLWidgets.widget({
 
     			  // Update the links…
     			  var link = svg.selectAll("path.link")
-    			      .data(links, function(d) { return d.target.uniqueid; });
+    			      .data(links, function(d) { return d.target.id; });
 
     			  // Enter any new links at the parent's previous position.
     			  link.enter().insert("path", "g")
