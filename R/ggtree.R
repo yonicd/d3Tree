@@ -10,13 +10,13 @@ ggtree <- function(
   name = "name", value = "value",
   width = NULL, height = NULL, elementId = NULL
 ) {
-
+  
   # forward options using x
   x = list(
     data = data,
     options = list(name = name, value = value)
   )
-
+  
   # create widget
   hw <- htmlwidgets::createWidget(
     name = 'ggtree',
@@ -26,7 +26,7 @@ ggtree <- function(
     package = 'SearchTree',
     elementId = elementId
   )
-
+  
   hw
 }
 

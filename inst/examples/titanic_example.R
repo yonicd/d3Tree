@@ -2,7 +2,7 @@ library(SearchTree)
 
 #  see if search tree is working as an htmlwidget
 tit_d3 <- list(
-  root = SearchTree:::df2tree(as.data.frame(Titanic)),
+  root = df2tree(as.data.frame(Titanic)),
   layout = 'collapse'
 )
 
