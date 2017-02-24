@@ -2,5 +2,7 @@
 
 export(d3tree)
 export(d3treeOutput)
+export(df2tree)
 export(renderD3tree)
+export(tree.filter)
 import(htmlwidgets)

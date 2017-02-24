@@ -4,7 +4,6 @@ library(stringr)
 library(DT)
 library(plyr)
 library(dplyr)
-library(SearchTree)
+library(d3Tree)
 
 m=Titanic%>%data.frame%>%mutate(value=NA)%>%distinct
-nodesList=list()

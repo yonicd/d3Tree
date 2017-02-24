@@ -21,27 +21,27 @@ shinyServer(function(input, output, session) {
     if(is.null(network$nodes)){
       df=m
     }else{
-      x.filter=SearchTree:::tree.filter(network$nodes,m)
+      x.filter=tree.filter(network$nodes,m)
       df=ddply(x.filter,.(id),function(a.x){m%>%filter_(.dots = list(a.x$x2))%>%distinct})
     }
     df
   })
   
   observeEvent(input$Hierarchy,{
-    output$d3 <- renderGgtree({
+    output$d3 <- renderD3tree({
       if(is.null(input$Hierarchy)){
         p=m
       }else{
         p=m%>%select(one_of(c(input$Hierarchy,"value")))%>%unique
       }
       
-      ggtree(list(root = SearchTree:::df2tree(p), layout = 'collapse'),height = 18)
+      d3tree(list(root = df2tree(m = p), layout = 'collapse'),height = 18)
     })
   })
 
   output$results <- renderPrint({
     str.out=''
-    if(!is.null(network$nodes)) str.out=SearchTree:::tree.filter(network$nodes,m)
+    if(!is.null(network$nodes)) str.out=tree.filter(network$nodes,m)
     str.out.global<<-str.out
     return(str.out)
   })

@@ -1,7 +1,26 @@
-#' <Add Title>
+#' @title d3tree
 #'
-#' <Add Description>
+#' @description Htmlwidget that binds to d3js trees. When used in Shiny environment the widget returns
+#' a data.frame of logical expressions that represent the current state of the tree. 
 #'
+#' @param data data.frame containing the structure the tree will represent
+#' @param name character containing the name of the tree
+#' @param value charater containing the name of the column in data that has the values
+#' that are used in the leafs
+#' 
+#' @examples  
+#' 
+#' \donttest{
+#' if(interactive()){
+#' d3tree(
+#' list(
+#' root = df2tree(rootname='Titanic',as.data.frame(Titanic)),
+#' layout = 'collapse'
+#' )
+#' )
+#' }
+#' }
+#' 
 #' @import htmlwidgets
 #'
 #' @export

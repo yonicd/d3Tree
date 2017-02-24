@@ -2,12 +2,36 @@
 % Please edit documentation in R/d3tree.R
 \name{d3tree}
 \alias{d3tree}
-\title{<Add Title>}
+\title{d3tree}
 \usage{
 d3tree(data, name = "name", value = "value", width = NULL,
   height = NULL, elementId = NULL)
 }
+\arguments{
+\item{data}{data.frame containing the structure the tree will represent}
+
+\item{name}{character containing the name of the tree}
+
+\item{value}{charater containing the name of the column in data that has the values
+that are used in the leafs}
+}
 \description{
-<Add Description>
+Htmlwidget that binds to d3js trees. When used in Shiny environment the widget returns
+a data.frame of logical expressions that represent the current state of the tree.
+}
+\examples{
+ 
+
+\donttest{
+if(interactive()){
+d3tree(
+list(
+root = df2tree(rootname='Titanic',as.data.frame(Titanic)),
+layout = 'collapse'
+)
+)
+}
+}
+
 }
 

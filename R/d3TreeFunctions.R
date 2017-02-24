@@ -15,11 +15,15 @@ makeList <- function(x) {
 renquote <- function(l) if (is.list(l)) lapply(l, renquote) else enquote(l)
 
 #data.frame to json sent to JS code
-df2tree <- function(m) {
-  list(name = "root", children = makeList(m))
+#' @export
+#' @keywords internal
+df2tree <- function(rootname='root',m) {
+  list(name = rootname, children = makeList(m))
 }
 
 #creates logial expression from tree structure
+#' @export
+#' @keywords internal
 tree.filter=function(nodesList,m){
   
   nodesdf=data.frame(rowname=names(nodesList),x=nodesList,stringsAsFactors = F)
