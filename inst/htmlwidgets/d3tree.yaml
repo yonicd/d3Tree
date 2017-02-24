@@ -1,0 +1,17 @@
+dependencies:
+  - name: d3
+    version: 3.5.17
+    src: htmlwidgets/d3/dist
+    script: d3.min.js
+  - name: cycle
+    version: 0.0.1
+    src: htmlwidgets/cycle
+    script: cycle.js
+  - name: d3-tip
+    version: 0.6.7
+    src: htmlwidgets/d3tip
+    script: d3.tip.js
+  - name: d3tree
+    version: 0.0.1
+    src: htmlwidgets/d3tree
+    stylesheet: d3tree.css

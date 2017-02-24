@@ -1,8 +1,8 @@
-Package: SearchTree
-Title: Interactive search tool using collapsible d3js Trees
+Package: d3Tree
+Title: Htmlwidget binding for collapsible d3js Trees
 Version: 0.0.1
 Authors@R: person("Jonathan", "Sidi", email = "yonis@metrumrg.com", role = c("aut", "cre"))
-Description: Search through large structures using collapsible d3js Trees. 
+Description: Htmlwidget used to search through large structures using collapsible d3js Trees. The htmlwidget in shiny returns a reactive elements that contains filters representing the current state of the tree.
 Depends:
     R (>= 3.1.0)
 Encoding: UTF-8

@@ -1,19 +1,14 @@
-shinyUI(fluidPage(
-  
-  mainPanel(
-    tabsetPanel(
-      tabPanel("Layout Tree Filter",
+shinyUI(
+  fluidPage(
                fluidRow(
-                 column(5,uiOutput("Hierarchy"),
-                        p("Filters Mapped from Tree"),
-                        verbatimTextOutput("results")),
-                 column(7,ggtreeOutput(outputId="d3"))
+                 column(7,
+                        uiOutput("Hierarchy"),
+                        verbatimTextOutput("results"),
+                        ggtreeOutput(outputId="d3",width = '1200px',height = '800px')
+                 ),
+                 column(5,
+                        tableOutput('table')
+                        )
                )
-      ),
-      tabPanel("Reactive Table",
-               column(12,tableOutput('table'))
       )
-    )
-  )
-)
 )
