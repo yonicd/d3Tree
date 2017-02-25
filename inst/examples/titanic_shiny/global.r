@@ -6,4 +6,4 @@ library(plyr)
 library(dplyr)
 library(d3Tree)
 
-m=Titanic%>%data.frame%>%mutate(value=NA)%>%distinct
+m=Titanic%>%data.frame%>%mutate(NEWCOL=NA)%>%distinct

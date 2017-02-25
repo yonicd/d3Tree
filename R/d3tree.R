@@ -3,21 +3,27 @@
 #' @description Htmlwidget that binds to d3js trees. When used in Shiny environment the widget returns
 #' a data.frame of logical expressions that represent the current state of the tree. 
 #'
-#' @param data data.frame containing the structure the tree will represent
-#' @param name character containing the name of the tree
-#' @param value charater containing the name of the column in data that has the values
+#' @param data named list containing hierarchy structure of data created by df2tree and the layout of the tree (collapse,radial,cartesian)
+#' @param name character containing the names of the nodes
+#' @param value charater containing the name of the tooltip column
 #' that are used in the leafs
 #' 
 #' @examples  
 #' 
 #' \donttest{
 #' if(interactive()){
-#' d3tree(
-#' list(
-#' root = df2tree(rootname='Titanic',as.data.frame(Titanic)),
-#' layout = 'collapse'
-#' )
-#' )
+#' 
+#' d3tree(list(root = df2tree(rootname='Titanic',
+#'                            struct=as.data.frame(Titanic)
+#'                            ),
+#'             layout = 'collapse')
+#'       )
+#' 
+#' d3tree(list(root = df2tree(rootname='Titanic',
+#'                            struct=as.data.frame(Titanic),
+#'                            toolTip=letters[1:(ncol(as.data.frame(Titanic))+1)]),
+#'             layout = 'collapse')
+#'       )
 #' }
 #' }
 #' 
@@ -26,7 +32,8 @@
 #' @export
 d3tree <- function(
   data,
-  name = "name", value = "value",
+  name = "name",
+  value = "value",
   width = NULL, height = NULL, elementId = NULL
 ) {
   

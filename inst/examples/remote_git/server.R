@@ -45,7 +45,7 @@ shinyServer(function(input, output, session) {
       df=m()
     }else{
       x.filter=d3Tree:::tree.filter(network$nodes,m())
-      df=ddply(x.filter,.(id),function(a.x){m()%>%filter_(.dots = list(a.x$x2))%>%distinct})
+      df=ddply(x.filter,.(ID),function(a.x){m()%>%filter_(.dots = list(a.x$FILTER))%>%distinct})
     }
     df
   })

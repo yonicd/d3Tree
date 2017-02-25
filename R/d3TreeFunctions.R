@@ -1,13 +1,21 @@
 # d3tree embed in shiny forked from https://github.com/cpsievert/shiny_apps/tree/master/ggtree
 # recursive approach! http://stackoverflow.com/questions/12818864/how-to-write-to-json-with-children-from-r
-makeList <- function(x) {
+makeList <- function(x,value=NULL) {
+  if(is.null(value)) value=names(x)
   idx <- is.na(x[,2])
   if (ncol(x) > 2 && sum(idx) != nrow(x)){
     listSplit <- split(x[-1], x[1], drop=T)
-    lapply(names(listSplit), function(y){list(name = y, value = names(x)[1], children = makeList(listSplit[[y]]))})
+    colName=value[1]
+    value=value[-1]
+    lapply(names(listSplit), function(y){
+      list(name = y, value = colName, children = makeList(listSplit[[y]],value=value))
+      })
   } else {
     nms <- x[,1]
-    lapply(seq_along(nms), function(y){list(name = nms[y], value = names(x)[1])})
+    colName=value[1]
+    lapply(seq_along(nms), function(y){
+      list(name = nms[y], value = colName)
+      })
   }
 }
 
@@ -15,17 +23,28 @@ makeList <- function(x) {
 renquote <- function(l) if (is.list(l)) lapply(l, renquote) else enquote(l)
 
 #data.frame to json sent to JS code
+#' @title df2tree
+#'
+#' @description converts dataframe to json to send to javascript
+#'
+#' @param struct data.frame containing the structure the tree will represent
+#' @param root character name of the root node
+#' @param toolTip charater vector of the label to give to the nodes in each hierarchy
+#' 
+#' @examples  
+#' df2tree(struct = as.data.frame(Titanic),rootname = 'Titanic')
+#' df2tree(struct = as.data.frame(Titanic),rootname = 'Titanic',toolTip = letters[1:5])
 #' @export
-#' @keywords internal
-df2tree <- function(rootname='root',m) {
-  list(name = rootname, children = makeList(m))
+df2tree <- function(struct,rootname='root',toolTip=NULL) {
+  if(is.null(toolTip)) toolTip=c(rootname,names(struct))
+  list(name = rootname, children = makeList(struct,value = toolTip[-1]),value=toolTip[1])
 }
 
 #creates logial expression from tree structure
 #' @export
 #' @keywords internal
 tree.filter=function(nodesList,m){
-  
+
   nodesdf=data.frame(rowname=names(nodesList),x=nodesList,stringsAsFactors = F)
   nodesdf.show=nodesdf%>%filter(!grepl('_children',rowname))
   x=nodesdf.show$rowname[grepl('name',nodesdf.show$rowname)]
@@ -37,13 +56,13 @@ tree.filter=function(nodesList,m){
     x.depth=max(x.count.depth)
     node_id=1:(length(x.count.depth))
     parent_id=rep(0,length(x.count)+1)
-    parent_id[1]=NA
+    #parent_id[1]=NA
     
     x.temp=rbind(unique(x.count.depth),rep(0,x.depth+1))
     x.temp[2,1]=1
     row.names(x.temp)=c("depth","current.parent.node")
-    
-    x.map=data.frame(node_name=c("root",nodesdf.show[grepl('value',nodesdf.show$rowname),'x']),
+
+    x.map=data.frame(node_name=c("root",head(nodesdf.show[grepl('value',nodesdf.show$rowname),'x'],-1)),
                      node_data=nodesdf.show[grepl('name',nodesdf.show$rowname),2],
                      node_id,parent_id,stringsAsFactors = F)
     
@@ -83,7 +102,8 @@ tree.filter=function(nodesList,m){
     
     active_filter=ldply(logics,.fun=function(x){ y%>%filter(node_id%in%x)%>%
         mutate(l=paste0(node_name,"=='",node_data,"'"))%>%
-        summarise(x2=paste0(l,collapse="&"))},.id = "id")%>%mutate(id=as.character(id))
+        summarise(FILTER=paste0(l,collapse="&"))},.id = "id")%>%
+      mutate(id=as.character(id))%>%rename(ID=id)
     
   }
   
