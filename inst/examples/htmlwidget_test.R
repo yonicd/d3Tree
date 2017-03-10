@@ -3,7 +3,11 @@ library(d3Tree)
 
 #Using d3Tree::df2tree function
 
+#horizontal(default)
 d3tree(list(root = df2tree(rootname = 'Titanic',struct = as.data.frame(Titanic),toolTip = letters[1:5]),layout = 'collapse'))
+
+#vertical
+d3tree(list(root = df2tree(rootname = 'Titanic',struct = as.data.frame(Titanic),toolTip = letters[1:5]),layout = 'collapse'),direction = 'v')
 
 #Using d3r::d3nest function
 library(d3r)
