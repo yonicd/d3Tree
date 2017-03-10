@@ -18,6 +18,46 @@ Creating new reactive elements through the integration of Shiny with d3js object
 
 Through Shiny we let the server observe the d3 <a href="https://bl.ocks.org/mbostock/4339083" target="_blank">collapsible tree library</a>  and its real-time layout. The data transferred  back to Shiny can be mapped to a series of logial expressions to create reactive filters. This allows for complex data structures, such as heirarchal simulations, complex design of clinical trials and results from polycompartmental structural models to be visually represented and *filtered in a reactive manner* through an intuitive and simple tool.
 
+### Updates 
+  - New shiny observer 'activeNode' added to return meta data of last clicked node. (full example app see [here](https://raw.githubusercontent.com/metrumresearchgroup/d3Tree/master/inst/examples/titanic_shiny))
+  
+  Server Side
+  
+```
+  observeEvent(input$d3_update,{
+    activeNode<-input$d3_update$.activeNode
+    if(!is.null(activeNode)) network$click <- jsonlite::fromJSON(activeNode)
+  })
+  
+  observeEvent(network$click,{
+    output$clickView<-renderTable({
+      as.data.frame(network$click)
+    },caption='Last Clicked Node',caption.placement='top')
+  })
+  
+```
+  
+  UI Side
+  
+```
+  tableOutput("clickView")
+```
+  
+  - give option to grow a horizontal tree (default) and a vertical tree
+  
+
+```
+    #horizontal(default)
+    d3tree(list(root = df2tree(rootname = 'Titanic',struct = as.data.frame(Titanic),toolTip = letters[1:5]),
+    layout = 'collapse'))
+    
+    #vertical
+    d3tree(list(root = df2tree(rootname = 'Titanic',struct = as.data.frame(Titanic),toolTip = letters[1:5]),
+    layout = 'collapse'),direction = 'v')
+    
+```
+
+
 ### Examples
 
 ####Running the App through <a href="https://github.com/metrumresearchgroup/d3Tree" target="_blank">Github</a>
