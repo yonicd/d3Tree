@@ -7,6 +7,7 @@
 #' @param name character containing the names of the nodes
 #' @param value charater containing the name of the tooltip column
 #' that are used in the leafs
+#' @param direction charater containing the direction the collapsible tree layout will grow to horizontal or vertical (can be 'h','v')
 #' 
 #' @examples  
 #' 
@@ -34,13 +35,14 @@ d3tree <- function(
   data,
   name = "name",
   value = "value",
+  direction='horizontal',
   width = NULL, height = NULL, elementId = NULL
 ) {
   
   # forward options using x
   x = list(
     data = data,
-    options = list(name = name, value = value)
+    options = list(name = name, value = value,dir=tolower(substring(direction, 1, 1)))
   )
   
   # create widget

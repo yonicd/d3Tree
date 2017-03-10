@@ -4,8 +4,8 @@
 \alias{d3tree}
 \title{d3tree}
 \usage{
-d3tree(data, name = "name", value = "value", width = NULL,
-  height = NULL, elementId = NULL)
+d3tree(data, name = "name", value = "value", direction = "horizontal",
+  width = NULL, height = NULL, elementId = NULL)
 }
 \arguments{
 \item{data}{named list containing hierarchy structure of data created by df2tree and the layout of the tree (collapse,radial,cartesian)}
@@ -14,6 +14,8 @@ d3tree(data, name = "name", value = "value", width = NULL,
 
 \item{value}{charater containing the name of the tooltip column
 that are used in the leafs}
+
+\item{direction}{charater containing the direction the collapsible tree layout will grow to horizontal or vertical (can be 'h','v')}
 }
 \description{
 Htmlwidget that binds to d3js trees. When used in Shiny environment the widget returns

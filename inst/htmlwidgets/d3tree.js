@@ -22,16 +22,17 @@ HTMLWidgets.widget({
     		// Define some 'common' variables
     		var root = data['root'];
     		var layout = data['layout'];
+    		
     		//  these are the names of the key for name and value
     		var name_var = x.options.name ? x.options.name : "name";
     		var value_var = x.options.value ? x.options.value : "value";
-
+        var dir= x.options.dir ? x.options.dir : "h";
     		// Initialize tooltip
     		tip = d3.tip().attr('class', 'd3-tip').html(function(d) { return "<p style=\"color: #000000; background-color: #ffffff\">" + d[value_var] + "</p>"; });
 
     		if (layout == "collapse") {
 
-    			var margin = {top: 0, right: 30, bottom: 20, left: 40},
+    			var margin = {top: 20, right: 30, bottom: 20, left: 40},
     			    width = el.getBoundingClientRect().width - margin.right - margin.left,
     			    height = el.getBoundingClientRect().height - margin.top - margin.bottom;
 
@@ -44,12 +45,12 @@ HTMLWidgets.widget({
   			  //  used i which could easily blow up
   			  var uniqueid = 0;
     			var duration = 750;
-
+          var activeNode;
     			var tree = d3.layout.tree()
     			    .size([height, width]);
 
     			var diagonal = d3.svg.diagonal()
-    			    .projection(function(d) { return [d.y, d.x]; });
+    			    .projection(function(d) { return (dir=='h' ? [d.y, d.x] : [d.x, d.y]) });
 
     			 // Append a new svg element
     			var svg = d3.select(el).append("svg")
@@ -73,6 +74,9 @@ HTMLWidgets.widget({
     			    d.children = d._children;
     			    d._children = null;
     			  }
+    			  
+    			  activeNode={level:d.value,value:d.name};
+
     			  update(d);
     			}
 
@@ -90,9 +94,8 @@ HTMLWidgets.widget({
     			  var nodes = tree.nodes(root).reverse(),
     			      links = tree.links(nodes);
 
-
     			  // Normalize for fixed-depth.
-    			  nodes.forEach(function(d) { d.y = d.depth * 90; });
+    			  nodes.forEach(function(d) { d.y = d.depth * 100; });
 
     			  // Update the nodes…
     			  var node = svg.selectAll("g.node")
@@ -103,7 +106,8 @@ HTMLWidgets.widget({
     			  // Enter any new nodes at the parent's previous position.
     			  var nodeEnter = node.enter().append("g")
     			      .attr("class", "node")
-    			      .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
+    			      .attr("transform", function(d) { return (dir=='h' ? "translate(" + source.y0 + "," + source.x0 + ")" :
+    			             "translate(" + source.x0 + "," + source.y0 + ")") })
     			      .on("click", click)
     			      .on('mouseover', tip.show)
     		  		  .on('mouseout', tip.hide);
@@ -113,17 +117,14 @@ HTMLWidgets.widget({
     			      .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
 
     			  nodeEnter.append("text")
-    			      //.attr("x", function(d) { return d.children || d._children ? 10 : 10; })
     			      .attr("dy", "0.35em")
-    			      //.attr("transform", "rotate(10)")
-    			      //.attr("text-anchor", function(d) { return d.children || d._children ? "start" : "start"; })
     			      .text(function(d) { return d[name_var]; })
     			      .style("fill-opacity", 1e-6);
 
     			  // Transition nodes to their new position.
     			  var nodeUpdate = node.transition()
     			      .duration(duration)
-    			      .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
+    			      .attr("transform", function(d) { return (dir=='h' ? "translate(" + d.y + "," + d.x + ")" : "translate(" + d.x + "," + d.y + ")") });
 
     			  nodeUpdate.select("circle")
     			      .attr("r", 4.5)
@@ -142,7 +143,7 @@ HTMLWidgets.widget({
     			  // Transition exiting nodes to the parent's new position.
     			  var nodeExit = node.exit().transition()
     			      .duration(duration)
-    			      .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
+    			      .attr("transform", function(d) { return (dir=='h' ? "translate(" + source.y + "," + source.x + ")":"translate(" + source.x + "," + source.y + ")") })
     			      .remove();
 
     			  nodeExit.select("circle")
@@ -185,9 +186,10 @@ HTMLWidgets.widget({
 
 			       //return data to shiny
 			       var nodes1 = tree.nodes(root);
+			       
 			       if(typeof(Shiny) !== "undefined"){
                 Shiny.onInputChange(el.id + "_update",{
-                  ".nodesData": JSON.decycle(nodes1)
+                  ".nodesData": JSON.decycle(nodes1),".activeNode": JSON.stringify(activeNode)
                 });
 			       }
 
