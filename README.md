@@ -19,7 +19,7 @@ Creating new reactive elements through the integration of Shiny with d3js object
 Through Shiny we let the server observe the d3 <a href="https://bl.ocks.org/mbostock/4339083" target="_blank">collapsible tree library</a>  and its real-time layout. The data transferred  back to Shiny can be mapped to a series of logial expressions to create reactive filters. This allows for complex data structures, such as heirarchal simulations, complex design of clinical trials and results from polycompartmental structural models to be visually represented and *filtered in a reactive manner* through an intuitive and simple tool.
 
 ### Updates 
-  - New shiny observer 'activeNode' added to return meta data of last clicked node. (full example app see [here](https://raw.githubusercontent.com/metrumresearchgroup/d3Tree/master/inst/examples/titanic_shiny))
+  - New shiny observer 'activeNode' added to return meta data of last clicked node. (full example app see [here](https://github.com/metrumresearchgroup/d3Tree/tree/master/inst/examples/titanic_shiny))
   
   Server Side
   
