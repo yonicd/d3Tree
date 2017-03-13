@@ -8,6 +8,10 @@
 #' @param value charater containing the name of the tooltip column
 #' that are used in the leafs
 #' @param direction charater containing the direction the collapsible tree layout will grow to horizontal or vertical (can be 'h','v')
+#' @param activeReturn character vector of node attributes to observe and return to shiny.
+#' 
+#' @details activeReturn is set to NULL by default, but can return any attributes that are strings or numeric such as: name,value,depth,id.
+#' Any node attributes requested that are not found in the node keys are ignored.
 #' 
 #' @examples  
 #' 
@@ -36,15 +40,19 @@ d3tree <- function(
   name = "name",
   value = "value",
   direction='horizontal',
+  activeReturn=NULL,
   width = NULL, height = NULL, elementId = NULL
 ) {
   
   # forward options using x
   x = list(
     data = data,
-    options = list(name = name, value = value,dir=tolower(substring(direction, 1, 1)))
+    options = list(name = name,
+                   value = value,
+                   dir=tolower(substring(direction, 1, 1)),
+                   activeReturn=activeReturn
+                   )
   )
-  
   # create widget
   hw <- htmlwidgets::createWidget(
     name = 'd3tree',

@@ -9,6 +9,9 @@ d3tree(list(root = df2tree(rootname = 'Titanic',struct = as.data.frame(Titanic),
 #vertical
 d3tree(list(root = df2tree(rootname = 'Titanic',struct = as.data.frame(Titanic),toolTip = letters[1:5]),layout = 'collapse'),direction = 'v')
 
+#vertical
+d3tree(list(root = df2tree(rootname = 'Titanic',struct = as.data.frame(Titanic),toolTip = letters[1:5]),layout = 'collapse'),activeReturn = c('name','value','depth','id'))
+
 #Using d3r::d3nest function
 library(d3r)
 

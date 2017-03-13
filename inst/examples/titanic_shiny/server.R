@@ -45,7 +45,7 @@ shinyServer(function(input, output, session) {
         p=m%>%select(one_of(c(input$Hierarchy,"NEWCOL")))%>%unique
       }
       
-      d3tree(list(root = df2tree(struct = p,rootname = 'Titanic'), layout = 'collapse'),height = 18)
+      d3tree(data = list(root = df2tree(struct = p,rootname = 'Titanic'), layout = 'collapse'),activeReturn = c('name','value','depth','id'),height = 18)
     })
   })
 

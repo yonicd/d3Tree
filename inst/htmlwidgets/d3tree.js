@@ -27,6 +27,8 @@ HTMLWidgets.widget({
     		var name_var = x.options.name ? x.options.name : "name";
     		var value_var = x.options.value ? x.options.value : "value";
         var dir= x.options.dir ? x.options.dir : "h";
+        var activeReturn=x.options.activeReturn ? x.options.activeReturn : ['value', 'name'];
+         
     		// Initialize tooltip
     		tip = d3.tip().attr('class', 'd3-tip').html(function(d) { return "<p style=\"color: #000000; background-color: #ffffff\">" + d[value_var] + "</p>"; });
 
@@ -75,7 +77,11 @@ HTMLWidgets.widget({
     			    d._children = null;
     			  }
     			  
-    			  activeNode={level:d.value,value:d.name};
+    			 if((typeof activeReturn)=='string'){
+    			  activeNode = [activeReturn].reduce(function(o, k) { o[k] = d[k]; return o; }, {});  
+    			 }else{
+    			  activeNode = activeReturn.reduce(function(o, k) { o[k] = d[k]; return o; }, {});   
+    			 } 
 
     			  update(d);
     			}
