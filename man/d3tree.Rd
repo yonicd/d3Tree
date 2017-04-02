@@ -18,6 +18,12 @@ that are used in the leafs}
 \item{direction}{charater containing the direction the collapsible tree layout will grow to horizontal or vertical (can be 'h','v')}
 
 \item{activeReturn}{character vector of node attributes to observe and return to shiny.}
+
+\item{width, height}{Must be a valid CSS unit (like \code{'100\%'},
+\code{'400px'}, \code{'auto'}) or a number, which will be coerced to a
+string and have \code{'px'} appended.}
+
+\item{elementId}{The input slot that will be used to access the element.}
 }
 \description{
 Htmlwidget that binds to d3js trees. When used in Shiny environment the widget returns
@@ -44,8 +50,12 @@ d3tree(list(root = df2tree(rootname='Titanic',
                            toolTip=letters[1:(ncol(as.data.frame(Titanic))+1)]),
             layout = 'collapse')
       )
+
+d3tree(list(root = df2tree(rootname = 'book',
+                           struct = stan.models),
+            layout = 'collapse')
+      )
 }
 }
 
 }
-

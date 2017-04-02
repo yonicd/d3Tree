@@ -9,9 +9,9 @@ df2tree(struct, rootname = "root", toolTip = NULL)
 \arguments{
 \item{struct}{data.frame containing the structure the tree will represent}
 
-\item{toolTip}{charater vector of the label to give to the nodes in each hierarchy}
+\item{rootname}{character name of the root node}
 
-\item{root}{character name of the root node}
+\item{toolTip}{charater vector of the label to give to the nodes in each hierarchy}
 }
 \description{
 converts dataframe to json to send to javascript
@@ -21,4 +21,3 @@ converts dataframe to json to send to javascript
 df2tree(struct = as.data.frame(Titanic),rootname = 'Titanic')
 df2tree(struct = as.data.frame(Titanic),rootname = 'Titanic',toolTip = letters[1:5])
 }
-

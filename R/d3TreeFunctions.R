@@ -28,7 +28,7 @@ renquote <- function(l) if (is.list(l)) lapply(l, renquote) else enquote(l)
 #' @description converts dataframe to json to send to javascript
 #'
 #' @param struct data.frame containing the structure the tree will represent
-#' @param root character name of the root node
+#' @param rootname character name of the root node
 #' @param toolTip charater vector of the label to give to the nodes in each hierarchy
 #' 
 #' @examples  
@@ -40,29 +40,35 @@ df2tree <- function(struct,rootname='root',toolTip=NULL) {
   list(name = rootname, children = makeList(struct,value = toolTip[-1]),value=toolTip[1])
 }
 
-#creates logial expression from tree structure
+#' @title tree.filter
+#' @description creates character vector logial expression from tree structure
+#' @param nodeList list created of tree nodes observed from d3tree.js hook
+#' @param m data.frame to filter
+#' @return data.frame
 #' @export
 #' @keywords internal
+#' @importFrom plyr ldply ddply
+#' @importFrom stringr str_count
+#' @import dplyr
 tree.filter=function(nodesList,m){
 
   nodesdf=data.frame(rowname=names(nodesList),x=nodesList,stringsAsFactors = F)
-  nodesdf.show=nodesdf%>%filter(!grepl('_children',rowname))
+  nodesdf.show=nodesdf[!grepl('_children',nodesdf$rowname),]
   x=nodesdf.show$rowname[grepl('name',nodesdf.show$rowname)]
   if(length(x)==1){
     active_filter=NULL
   }else{
-    x.count=10^-(str_count(x[-1],"children")-1)
-    x.count.depth=c(0,(str_count(x[-1],"children")))
+    x.count=10^-(stringr::str_count(x[-1],"children")-1)
+    x.count.depth=c(0,(stringr::str_count(x[-1],"children")))
     x.depth=max(x.count.depth)
     node_id=1:(length(x.count.depth))
     parent_id=rep(0,length(x.count)+1)
-    #parent_id[1]=NA
     
     x.temp=rbind(unique(x.count.depth),rep(0,x.depth+1))
     x.temp[2,1]=1
     row.names(x.temp)=c("depth","current.parent.node")
 
-    x.map=data.frame(node_name=c("root",head(nodesdf.show[grepl('value',nodesdf.show$rowname),'x'],-1)),
+    x.map=data.frame(node_name=c("root",utils::head(nodesdf.show[grepl('value',nodesdf.show$rowname),'x'],-1)),
                      node_data=nodesdf.show[grepl('name',nodesdf.show$rowname),2],
                      node_id,parent_id,stringsAsFactors = F)
     
@@ -76,13 +82,15 @@ tree.filter=function(nodesList,m){
     
     tx=cbind(x.map,d=rowSums(A))
     
-    y=ddply(tx%>%filter(node_name!="root"),.(parent_id),.fun = function(df){
-      if(all(df$d==0)){
-        df
-      }else{
-        df%>%filter(d!=0)
-      }
-    })%>%arrange(node_id)%>%select(-d)%>%mutate_each(funs(as.character))
+    y=plyr::ddply(tx%>%dplyr::filter_(.dots = ~node_name!="root"),c('parent_id'),
+              .fun = function(df){
+                                  if(all(df$d==0)){
+                                    df
+                                  }else{
+                                    df%>%dplyr::filter_(.dots = ~d!=0)
+                                  }
+    })%>%dplyr::arrange(node_id)%>%
+      dplyr::select_(.dots = '-d')%>%dplyr::mutate_each(funs(as.character))
     
     y$leaf=cumsum(as.numeric(!y$node_id%in%y$parent_id))*as.numeric(!y$node_id%in%y$parent_id)
     
@@ -100,13 +108,17 @@ tree.filter=function(nodesList,m){
     }
     
     
-    active_filter=ldply(logics,.fun=function(x){ y%>%filter(node_id%in%x)%>%
-        mutate(l=paste0(node_name,"=='",node_data,"'"))%>%
-        summarise(FILTER=paste0(l,collapse="&"))},.id = "id")%>%
-      mutate(id=as.character(id))%>%rename(ID=id)
+  active_filter=plyr::ldply(logics,.fun=function(x){ 
+
+    y=y[y$node_id%in%x,]
+    y$l=paste0(y$node_name,"=='",y$node_data,"'")
+    y%>%dplyr::summarise_(.dots = list(FILTER='paste0(l,collapse="&")'))
+    },.id = "id")
+  
+  active_filter$id=as.character(active_filter$id)
+  names(active_filter)[which(names(active_filter)=='id')]='ID'
     
   }
-  
   
   return(active_filter)
 }

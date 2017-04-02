@@ -9,6 +9,10 @@
 #' that are used in the leafs
 #' @param direction charater containing the direction the collapsible tree layout will grow to horizontal or vertical (can be 'h','v')
 #' @param activeReturn character vector of node attributes to observe and return to shiny.
+#' @param width,height Must be a valid CSS unit (like \code{'100\%'},
+#'   \code{'400px'}, \code{'auto'}) or a number, which will be coerced to a
+#'   string and have \code{'px'} appended.
+#' @param elementId The input slot that will be used to access the element.
 #' 
 #' @details activeReturn is set to NULL by default, but can return any attributes that are strings or numeric such as: name,value,depth,id.
 #' Any node attributes requested that are not found in the node keys are ignored.
@@ -27,6 +31,11 @@
 #' d3tree(list(root = df2tree(rootname='Titanic',
 #'                            struct=as.data.frame(Titanic),
 #'                            toolTip=letters[1:(ncol(as.data.frame(Titanic))+1)]),
+#'             layout = 'collapse')
+#'       )
+#' 
+#' d3tree(list(root = df2tree(rootname = 'book',
+#'                            struct = stan.models),
 #'             layout = 'collapse')
 #'       )
 #' }

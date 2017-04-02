@@ -44,7 +44,7 @@ shinyServer(function(input, output, session) {
     if(is.null(network$nodes)){
       df=m()
     }else{
-      x.filter=d3Tree:::tree.filter(network$nodes,m())
+      x.filter=tree.filter(network$nodes,m())
       df=ddply(x.filter,.(ID),function(a.x){m()%>%filter_(.dots = list(a.x$FILTER))%>%distinct})
     }
     df
@@ -58,7 +58,7 @@ shinyServer(function(input, output, session) {
           isolate({p=m()%>%select(one_of(c(input$Hierarchy,"value")))%>%unique  })
         }
 
-      d3tree(list(root = d3Tree:::df2tree(p), layout = 'collapse'),height = 18)
+      d3tree(list(root = df2tree(p), layout = 'collapse'),height = 18)
     })
   })
   
