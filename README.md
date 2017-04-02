@@ -1,6 +1,7 @@
 # Reactive shiny filters through collapsible d3js trees
 
 ### Overview
+
 D3js is a great tool to visualize complex data in a dynamic way. But how can the visualization be part of the natural workflow? 
 
 Creating new reactive elements through the integration of Shiny with d3js objects allows us to solve this problem.
@@ -49,7 +50,7 @@ Through Shiny we let the server observe the d3 <a href="https://bl.ocks.org/mbos
 
 ### Examples
 
-####Running the App through <a href="https://github.com/metrumresearchgroup/d3Tree" target="_blank">Github</a>
+#### Running the App through <a href="https://github.com/metrumresearchgroup/d3Tree" target="_blank">Github</a>
 ```
 #check to see if libraries need to be installed
 libs=c("rstan","shiny","shinyAce","RCurl","reshape2","stringr","DT","plyr","dplyr")
@@ -114,7 +115,6 @@ Now let's see the real example. The tree below is the visual representation of t
   
   <a href="http://metrumrg.com/blog/2016/10/reactive-shiny-d3js-trees.html" target="_blank">![](https://raw.githubusercontent.com/metrumresearchgroup/d3Tree/master/Miscellaneous/www/rbloggersGifs/STANIntro.gif)</a>
     
-  
   - Change the hierarchy around and get different perspectives of the book. 
   
   Let's say you clicked on chapter 4, now look in the additional Panel Tabs
