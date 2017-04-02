@@ -1,4 +1,3 @@
-
 shinyServer(function(input, output, session) {
   
   #Radio buttons----
@@ -17,13 +16,11 @@ shinyServer(function(input, output, session) {
   })
   
   #d3Tree----
-  
-  network <- reactiveValues()
-  
+
   m<-eventReactive(input$m,{
     structure.list[[input$m]]
   })
-  
+    
   observeEvent(input$m,{
     output$Hierarchy <- renderUI({
       Hierarchy=names(m())
@@ -35,6 +32,8 @@ shinyServer(function(input, output, session) {
     })
   })
   
+  network <- reactiveValues()
+  
   observeEvent(input$d3_update,{
     network$nodes <- unlist(input$d3_update$.nodesData)
   })
@@ -44,7 +43,7 @@ shinyServer(function(input, output, session) {
     if(is.null(network$nodes)){
       df=m()
     }else{
-      x.filter=tree.filter(network$nodes,m())
+      x.filter=d3Tree::tree.filter(network$nodes,m())
       df=ddply(x.filter,.(ID),function(a.x){m()%>%filter_(.dots = list(a.x$FILTER))%>%distinct})
     }
     df
@@ -52,13 +51,13 @@ shinyServer(function(input, output, session) {
   
   observeEvent(input$Hierarchy,{
     output$d3 <- renderD3tree({
-        if(!any(names(m)%in%input$Hierarchy)){
-          isolate({p=m()})
+        if(!any(names(m())%in%input$Hierarchy)){
+          p=m()
         }else{
-          isolate({p=m()%>%select(one_of(c(input$Hierarchy,"value")))%>%unique  })
+          p=m()%>%select(one_of(c(input$Hierarchy,"value")))%>%unique
         }
 
-      d3tree(list(root = df2tree(p), layout = 'collapse'),height = 18)
+      d3Tree::d3tree(list(root = d3Tree::df2tree(p), layout = 'collapse'),height = 18)
     })
   })
   
@@ -132,10 +131,9 @@ shinyServer(function(input, output, session) {
 
   output$filterPrint=renderUI({
     toace=str.out=''
-    
     if(!is.null(network$nodes)){
-      str.out=d3Tree:::tree.filter(network$nodes,m())
-      junk=textConnection(capture.output(str.out[['x2']]))
+      str.out=d3Tree::tree.filter(network$nodes,m())
+      junk=textConnection(capture.output(str.out[['FILTER']]))
       toace=paste0(readLines(junk),collapse='\n')
     } 
     

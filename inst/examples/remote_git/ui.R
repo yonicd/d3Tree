@@ -25,7 +25,7 @@ shinyUI(fluidPage(
     
   mainPanel(
     div(class = "busy",
-        img(src="http://downgraf.com/wp-content/uploads/2014/09/01-progress.gif", height="100",width="100"),
+        img(src=sprintf("https://raw.githubusercontent.com/metrumresearchgroup/d3Tree/master/Miscellaneous/busy/loading%s.gif",sample(1:5,1)), height="100",width="100"),
         p("Simulating...")
     ),
     tabsetPanel(

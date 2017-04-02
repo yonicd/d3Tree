@@ -8,7 +8,8 @@ Authors@R: c(person("Jonathan", "Sidi", email = "yonis@metrumrg.com", role = c("
 Description: Create and customize interactive collapsible d3 trees using the 'd3'
     JavaScript library and the 'htmlwidgets' package. These trees can be used
     directly from the R console, from 'RStudio', in Shiny apps and R Markdown documents.
-    When in Shiny the tree layout is observed by the server and can be used as a reactive UI.
+    When in Shiny the tree layout is observed by the server and can be used as a reactive filter
+    of structured data.
 Depends:
     R (>= 2.3.0)
 Imports:
