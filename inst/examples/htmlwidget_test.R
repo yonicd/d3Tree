@@ -20,5 +20,6 @@ d3tree(
     root = d3r::d3_nest(as.data.frame(Titanic)),
     layout = "collapse"
   ),
+  direction='v',
   value = "colname"
 )

@@ -94,8 +94,53 @@ HTMLWidgets.widget({
     			  }
     			}
 
-    			function update(source) {
 
+          // Returns a flattened hierarchy containing all leaf nodes under the root.
+          function flatten(root) {
+            var nodes = [];
+            
+            function recurse(node) {
+              if (node.children){
+                node.children.forEach(recurse);
+              }else{
+                item={
+                      node_name: node.colname,  
+                      node_data: node.name, 
+                      node_id: node.id,
+                      node_depth: node.depth,
+                      parent_name: node.parent.colname,
+                      parent_id: node.parent.id,
+                      parent_depth: node.parent.depth
+                };
+                nodes.push(item);
+              }
+            }
+          
+            recurse(root);
+            return {children: nodes};
+          }
+
+    			function update(source) {
+        // compute the new height
+            var levelWidth = [1];
+            
+            var childCount = function(level, n) {
+              
+              if(n.children && n.children.length > 0) {
+                if(levelWidth.length <= level + 1) levelWidth.push(0);
+                
+                levelWidth[level+1] += n.children.length;
+                n.children.forEach(function(d) {
+                  childCount(level + 1, d);
+                });
+              }
+            };
+            
+            childCount(0, root);  
+            
+            var newHeight = d3.max(levelWidth) * 20; // 20 pixels per line  
+            tree = tree.size([newHeight, width]);
+            
     			  // Compute the new tree layout.
     			  var nodes = tree.nodes(root).reverse(),
     			      links = tree.links(nodes);
@@ -141,7 +186,7 @@ HTMLWidgets.widget({
                 .attr("text-anchor", function(d) {
                       return d.children ? "end" : "start";
                      })
-                .attr("transform", function(d) {return d.children ? "rotate(20)":"rotate(0)"})
+                .attr("transform", function(d) {return d.children ? "rotate(20)":"rotate("+90*(dir=='v')+")"})
                 .attr("x", function(d) {
                       return d.children ? -10 : 10;
                     });
@@ -192,10 +237,16 @@ HTMLWidgets.widget({
 
 			       //return data to shiny
 			       var nodes1 = tree.nodes(root);
+			       var nodes2 = flatten(root);
+			       
+			       console.log(nodes1);
+			       console.log(nodes2);
+			       
 			       
 			       if(typeof(Shiny) !== "undefined"){
                 Shiny.onInputChange(el.id + "_update",{
-                  ".nodesData": JSON.decycle(nodes1),".activeNode": JSON.stringify(activeNode)
+                  ".nodesData": JSON.decycle(nodes1),".activeNode": JSON.stringify(activeNode),
+                  ".nodesNew": JSON.stringify(nodes2)
                 });
 			       }
 
@@ -253,7 +304,7 @@ HTMLWidgets.widget({
     		      .attr("transform", function(d) { return d.x < 180 ? "translate(8)" : "rotate(180)translate(-8)"; })
     		      .text(function(d) { return d[name_var]; });
 
-    		  d3.select(self.frameElement).style("height", diameter - 150 + "px");
+          d3.select(self.frameElement).style("height", diameter - 150 + "px");
 
     		} else if (layout == "cartesian") {
 

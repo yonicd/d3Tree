@@ -11,11 +11,12 @@ makeList <- function(x,value=NULL) {
       list(name = y, value = colName, children = makeList(listSplit[[y]],value=value))
       })
   } else {
-    nms <- x[,1]
+    if(!all(is.na(x[,1]))){nms <- x[,1]
     colName=value[1]
     lapply(seq_along(nms), function(y){
       list(name = nms[y], value = colName)
-      })
+    })
+    }
   }
 }
 
