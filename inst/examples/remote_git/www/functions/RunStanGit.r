@@ -84,19 +84,19 @@ RunStanGit=function(url.loc,dat.loc.in,r.file,flag=T){
 }
 
 #example ----
-  # url.loc='https://raw.githubusercontent.com/stan-dev/example-models/master/ARM/'
-  # ex=data.frame(r.file=c('10.4_LackOfOverlapWhenTreat.AssignmentIsUnknown.R',
-  #                        '10.5_CasualEffectsUsingIV.R',
-  #                        '10.6_IVinaRegressionFramework.R', #sourcing another file
-  #                        '3.1_OnePredictor.R', #removing partial path to file
-  #                        '8.4_PredictiveSimulationToCheckFitOfTimeSeriesModels.R'), #removing echo call from readlines
-  #               stringsAsFactors = F)
+  #   url.loc='https://raw.githubusercontent.com/stan-dev/example-models/master/ARM/'
+  #   ex=data.frame(r.file=c('10.4_LackOfOverlapWhenTreat.AssignmentIsUnknown.R',
+  #                          '10.5_CasualEffectsUsingIV.R',
+  #                          '10.6_IVinaRegressionFramework.R', #sourcing another file
+  #                          '3.1_OnePredictor.R', #removing partial path to file
+  #                          '8.4_PredictiveSimulationToCheckFitOfTimeSeriesModels.R'), #removing echo call from readlines
+  #                 stringsAsFactors = F)
   # 
-  # ex$chapter=unlist(lapply(lapply(strsplit(ex$r.file,'[\\_]'),'[',1),function(x) paste('Ch',strsplit(x,'[\\.]')[[1]][1],sep='.')))
-  # ex$example=unlist(lapply(lapply(strsplit(ex$r.file,'[\\_]'),'[',1),function(x) strsplit(x,'[\\.]')[[1]][2]))
+  #   ex$chapter=unlist(lapply(lapply(strsplit(ex$r.file,'[\\_]'),'[',1),function(x) paste('Ch',strsplit(x,'[\\.]')[[1]][1],sep='.')))
+  #   ex$example=unlist(lapply(lapply(strsplit(ex$r.file,'[\\_]'),'[',1),function(x) strsplit(x,'[\\.]')[[1]][2]))
   # 
-  # a=dlply(ex%>%slice(c(3)),.(r.file),.fun=function(x) RunStanGit(url.loc,dat.loc=paste0(x$chapter,'/'),r.file=x$r.file),.progress = 'text')
-#
+  #   a=plyr::dlply(ex%>%slice(c(1)),.(r.file),.fun=function(x) RunStanGit(url.loc,dat.loc=paste0(x$chapter,'/'),r.file=x$r.file),.progress = 'text')
+  #
 # Functions to read output into nested list structure with data.frame in leaf
   # stan.sim.out=llply(a,.fun=function(m){
   #   llply(m,.fun=function(stan.out){
