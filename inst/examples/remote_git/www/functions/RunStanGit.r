@@ -46,8 +46,18 @@ RunStanGit=function(url.loc,dat.loc.in,r.file,flag=T){
   keep.files=gsub(' ','',unlist(lapply(strsplit(r.code[which(grepl('stan\\(',r.code))],'<-'),'[',1)))
 
 # Comment out print calls ----
-  r.code=gsub('print','#print',r.code)
-  r.code=gsub('pairs','#pairs',r.code)  
+
+  
+  pr.code <- parse(text=r.code)
+  pr.code <- utils::getParseData(pr.code,includeText = TRUE)
+  
+  pr.code <- pr.code[pr.code$parent==0&grepl('^print|^pairs',pr.code$text),]
+  comment.lines <- unique(unlist(mapply(seq,from=pr.code$line1,to=pr.code$line2)))
+  r.code[comment.lines] <- sprintf('#%s',r.code[comment.lines])
+
+  #r.code=gsub('print','#print',r.code)
+  #r.code=gsub('pairs','#pairs',r.code) 
+  
   if(length(keep.files)>0){
       for(i in 1:length(keep.files)){
         comment.out=r.code[grep(keep.files[i],r.code)[!grepl('#|<-|=',r.code[grep(keep.files[i],r.code)])]]
@@ -61,9 +71,9 @@ RunStanGit=function(url.loc,dat.loc.in,r.file,flag=T){
         x=c(as.numeric(gregexpr('\\"',r.code[stan.find[i]])[[1]]),as.numeric(gregexpr("\\'",r.code[stan.find[i]])[[1]]))
         x=x[x!=-1]
         file.name=strip.path(substr(r.code[stan.find[i]],x[1]+1,x[2]-1))
-        eval(parse(text=paste0(file.name,' <- tempfile()')))
+        eval(parse(text=paste0(file.name," <- tempfile(fileext = '.stan')")))
         loc.file=paste0('"',dat.loc,file.name,'"')
-        eval(parse(text=paste0('download.file(',loc.file,',',file.name,',quiet = T,method="curl")')))
+        eval(parse(text=paste0('download.file(',loc.file,',',file.name,',quiet = TRUE,method="curl")')))
         to.unlink[i]=file.name
         r.code[stan.find[i]]=gsub(substr(r.code[stan.find[i]],x[1],x[2]),strip.path(substr(r.code[stan.find[i]],x[1]+1,x[2]-1)),r.code[stan.find[i]])
       }

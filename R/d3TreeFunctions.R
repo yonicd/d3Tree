@@ -91,7 +91,7 @@ tree.filter=function(nodesList,m){
                                     df%>%dplyr::filter_(.dots = ~d!=0)
                                   }
     })%>%dplyr::arrange(node_id)%>%
-      dplyr::select_(.dots = '-d')%>%dplyr::mutate_each(funs(as.character))
+      dplyr::select_(.dots = '-d')%>%dplyr::mutate_all(funs(as.character))
     
     y$leaf=cumsum(as.numeric(!y$node_id%in%y$parent_id))*as.numeric(!y$node_id%in%y$parent_id)
     

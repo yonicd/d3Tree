@@ -21,23 +21,25 @@ stan.df.extract=function(a){
 }
 
 stan.tree.construct=function(stan.sim.output){
-  stan.models%>%mutate_each(funs(as.character),r.files,stan.obj.output)%>%
+  stan.models%>%mutate_at(vars(r.files,stan.obj.output),funs(as.character))%>%
     inner_join(stan.df.extract(stan.sim.output)%>%
                  ddply(.(r.files,stan.obj.output),.fun=function(y) y%>%melt(.,c('r.files','stan.obj.output','Chain','Iter'))%>%filter(!is.na(value)))%>%
                  select(-c(Iter,value))%>%
-                 distinct%>%mutate_each(funs(as.character),r.files,stan.obj.output),
+                 distinct%>%mutate_at(vars(r.files,stan.obj.output),funs(as.character)),
                by=c('r.files','stan.obj.output')
     )%>%mutate(Measure=factor(gsub('[0-9.]','',variable)))
 }
 
 #create list for table view
 read.stan=function(stan.data,tree.df){
+  
   stan.df=stan.df.extract(stan.data)%>%
-    mutate_each(funs(as.character),r.files,stan.obj.output)%>%
-    mutate_each(funs(as.numeric),-c(r.files,stan.obj.output))
+    mutate_at(vars(r.files,stan.obj.output),funs(as.character))%>%
+    mutate_if(function(x) !is.character(x),as.numeric)
   
   x=stan.df%>%melt(.,c('r.files','stan.obj.output','Chain','Iter'))%>%mutate(variable=as.character(variable))
-  x1=tree.df%>%select(stan.obj.output,Chain,variable)%>%mutate_each(funs(as.character))%>%mutate(Chain=as.numeric(Chain))
+  
+  x1=tree.df%>%select(stan.obj.output,Chain,variable)%>%mutate_all(funs(as.character))%>%mutate(Chain=as.numeric(Chain))
   
   x1%>%left_join(x,by=c('stan.obj.output','Chain','variable'))%>%
     dlply(.(stan.obj.output),.fun=function(df) df%>%dcast(Chain+Iter~variable,value.var='value'))

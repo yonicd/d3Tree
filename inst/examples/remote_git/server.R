@@ -74,7 +74,7 @@ shinyServer(function(input, output, session) {
   })
   
   RunStan<-eventReactive(input$goButton,{
-    ex=TreeStruct()%>%select(r.files)%>%mutate_each(funs(as.character))%>%unique
+    ex=TreeStruct()%>%select(r.files)%>%mutate_all(funs(as.character))%>%unique
     ex$chapter=unlist(lapply(lapply(strsplit(ex$r.files,'[\\_]'),'[',1),function(x) paste('Ch',strsplit(x,'[\\.]')[[1]][1],sep='.')))
     ex$example=unlist(lapply(lapply(strsplit(ex$r.files,'[\\_]'),'[',1),function(x) strsplit(x,'[\\.]')[[1]][2]))
     
