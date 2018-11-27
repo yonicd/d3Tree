@@ -5,7 +5,7 @@
 #'
 #' @param data named list containing hierarchy structure of data created by df2tree and the layout of the tree (collapse,radial,cartesian)
 #' @param name character containing the names of the nodes
-#' @param value charater containing the name of the tooltip column
+#' @param value character containing the name of the tooltip column
 #' that are used in the leafs
 #' @param direction charater containing the direction the collapsible tree layout will grow to horizontal or vertical (can be 'h','v')
 #' @param activeReturn character vector of node attributes to observe and return to shiny.

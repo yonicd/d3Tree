@@ -12,7 +12,7 @@ d3tree(data, name = "name", value = "value", direction = "horizontal",
 
 \item{name}{character containing the names of the nodes}
 
-\item{value}{charater containing the name of the tooltip column
+\item{value}{character containing the name of the tooltip column
 that are used in the leafs}
 
 \item{direction}{charater containing the direction the collapsible tree layout will grow to horizontal or vertical (can be 'h','v')}
