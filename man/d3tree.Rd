@@ -4,8 +4,9 @@
 \alias{d3tree}
 \title{d3tree}
 \usage{
-d3tree(data, name = "name", value = "value", direction = "horizontal",
-  activeReturn = NULL, width = NULL, height = NULL, elementId = NULL)
+d3tree(data, name = "name", value = "value",
+  direction = "horizontal", activeReturn = NULL, width = NULL,
+  height = NULL, elementId = NULL)
 }
 \arguments{
 \item{data}{named list containing hierarchy structure of data created by df2tree and the layout of the tree (collapse,radial,cartesian)}
