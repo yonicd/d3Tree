@@ -4,7 +4,9 @@
 \name{stan.models}
 \alias{stan.models}
 \title{stan.models}
-\format{An object of class \code{"data.frame"}}
+\format{
+An object of class \code{"data.frame"}
+}
 \usage{
 stan.models
 }

@@ -18,6 +18,6 @@ source('www/functions/StanFunctions.r')
 
 #Read in list to populate d3 tree ----
   structure.list=list(
-      Titanic=Titanic%>%data.frame%>%mutate(value=NA)%>%distinct,
-      StanModels=stan.models%>%mutate(value=NA)%>%distinct
+      Titanic=Titanic |> data.frame() |> mutate(value=NA) |> distinct(),
+      StanModels=stan.models |> mutate(value=NA) |> distinct()
       )

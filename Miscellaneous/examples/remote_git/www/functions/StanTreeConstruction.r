@@ -8,19 +8,19 @@ stan.models=ddply(data.frame(chapter=c(1:25)[-c(1,11,15,17)]),.(chapter),.fun=fu
   x1=x[as.logical(cumsum(x=='Models'))]
   df.out=data.frame(model.type='NA',model.eq='NA',stringsAsFactors = F)
   if(length(x1)>4){
-    model.num=do.call('rbind',strsplit(x1[grepl('[0-9]',substr(x1,1,1))],'[.]'))%>%
-      data.frame%>%rename(model=X1,model.type=X2)%>%mutate(model=seq(1,nrow(.)))
+    model.num=do.call('rbind',strsplit(x1[grepl('[0-9]',substr(x1,1,1))],'[.]')) |> 
+      data.frame |> rename(model=X1,model.type=X2) |> mutate(model=seq(1,nrow(.)))
     
     df=data.frame(x1,model=NA,stringsAsFactors = F)
     df$model[which(grepl('[0-9]',substr(x1,1,1)))]=as.numeric(factor(which(grepl('[0-9]',substr(x1,1,1)))))
     df$model[1]=0
     df$model=na.locf(df$model)
-    df.out=df%>%filter(x1!='')%>%filter(model!=0)%>%left_join(model.num,by='model')%>%filter(grepl('[~]',x1))%>%select(model.type,model.eq=x1)
+    df.out=df |> filter(x1!='') |> filter(model!=0) |> left_join(model.num,by='model') |> filter(grepl('[~]',x1)) |> select(model.type,model.eq=x1)
   }
   return(df.out)
 },.progress = 'text')
 
-stan.models=stan.models%>%filter(!grepl('NA|Other|Above|weight',model.type))%>%filter(grepl('stan',model.eq))
+stan.models=stan.models |> filter(!grepl('NA|Other|Above|weight',model.type)) |> filter(grepl('stan',model.eq))
 stan.models$stan.files=gsub(' ','',unlist(lapply(strsplit(stan.models$model.eq,'[:]'),'[',1)))
 stan.models$model.eq=gsub('^\\s+|\\s+$','',unlist(lapply(strsplit(stan.models$model.eq,'[:]'),'[',2)))
 stan.models$reg.type=gsub('^\\s+|\\s+$','',unlist(lapply(strsplit(stan.models$model.eq,'[\\(]'),'[',1)))
@@ -30,9 +30,9 @@ url.path.raw='https://raw.githubusercontent.com/stan-dev/example-models/master/A
 
 h=ddply(data.frame(chapter=c(1:25)[-c(1,11,15,17)]),.(chapter),.fun=function(y){
   url.chapter=paste0('Ch.',y,'/')
-  read_html(paste0(url.path,url.chapter))%>%
-    html_nodes(xpath = '//*[contains(concat( " ", @class, " " ), concat( " ", "css-truncate-target", " " ))]//*[contains(concat( " ", @class, " " ), concat( " ", "js-navigation-open", " " ))]')%>%
-    html_text()%>%data.frame(x=.)%>%filter(grepl(glob2rx(paste0(y,'*_*')),.$x))%>%mutate(x.path=paste0(url.path.raw,url.chapter,x))  
+  read_html(paste0(url.path,url.chapter)) |> 
+    html_nodes(xpath = '//*[contains(concat( " ", @class, " " ), concat( " ", "css-truncate-target", " " ))]//*[contains(concat( " ", @class, " " ), concat( " ", "js-navigation-open", " " ))]') |> 
+    html_text() |> data.frame(x=.) |> filter(grepl(glob2rx(paste0(y,'*_*')),.$x)) |> mutate(x.path=paste0(url.path.raw,url.chapter,x))  
 },.progress = 'text')
 
 
@@ -53,15 +53,15 @@ stan.chapter.files=ddply(h,.(chapter,x),.fun=function(a){
           data.frame(stan.files=file.name,
                      stan.obj.output=output.name,
                      stringsAsFactors = F)
-},.progress = 'text')%>%
-  filter(!is.na(stan.files))%>%distinct
+},.progress = 'text') |> 
+  filter(!is.na(stan.files)) |> distinct()
 
 stan.models=
-  stan.chapter.files%>%
-  left_join(stan.models,by=c('chapter','stan.files'))%>%
-  filter(!is.na(reg.type))%>%
-  rename(r.files=x)%>%
-  distinct
+  stan.chapter.files |> 
+  left_join(stan.models,by=c('chapter','stan.files')) |> 
+  filter(!is.na(reg.type)) |> 
+  rename(r.files=x) |> 
+  distinct()
 
 stan.models=stan.models[names(stan.models)[c(1,7,5,2,3,4,6)]]
 
