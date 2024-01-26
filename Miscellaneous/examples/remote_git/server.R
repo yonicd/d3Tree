@@ -5,12 +5,12 @@ shinyServer(function(input, output, session) {
     if(input$goButton==0){
       radioButtons("m", "Example Data",split(c('Titanic','StanModels'),
                                              c('1. Titanic',
-                                               '2. Applied Regression Modeling: Full Tree')),selected = 'StanModels')    
+                                               '2. Applied Regression Modeling: Full Tree')),selected = 'Titanic')    
     }else{
       radioButtons("m", "Example Data",split(c('Titanic','StanModels','Stan'),
                                              c('1. Titanic',
                                                '2. Applied Regression Modeling: Full Tree',
-                                               '3. Applied Regression Modeling: Sim Output')),selected = 'StanModels')
+                                               '3. Applied Regression Modeling: Sim Output')),selected = 'Titanic')
     }
 
   })
@@ -43,8 +43,9 @@ shinyServer(function(input, output, session) {
     if(is.null(network$nodes)){
       df=m()
     }else{
-      x.filter=d3Tree::tree.filter(network$nodes,m())
-      df=ddply(x.filter,.(ID),function(a.x){m()%>%filter_(.dots = list(a.x$FILTER))%>%distinct})
+      x.filter=d3Tree::tree_filter(network$nodes,m())
+
+      df=ddply(x.filter,.(ID),function(a.x){m() |> filter_(.dots = list(a.x$FILTER)) |> distinct()})
     }
     df
   })
@@ -54,7 +55,7 @@ shinyServer(function(input, output, session) {
         if(!any(names(m())%in%input$Hierarchy)){
           p=m()
         }else{
-          p=m()%>%select(one_of(c(input$Hierarchy,"value")))%>%unique
+          p=m() |> select(one_of(c(input$Hierarchy,"value"))) |> unique()
         }
 
       d3Tree::d3tree(list(root = d3Tree::df2tree(p), layout = 'collapse'),height = 18)
@@ -74,7 +75,7 @@ shinyServer(function(input, output, session) {
   })
   
   RunStan<-eventReactive(input$goButton,{
-    ex=TreeStruct()%>%select(r.files)%>%mutate_all(funs(as.character))%>%unique
+    ex=TreeStruct() |> select(r.files) |> mutate_all(funs(as.character)) |> unique()
     ex$chapter=unlist(lapply(lapply(strsplit(ex$r.files,'[\\_]'),'[',1),function(x) paste('Ch',strsplit(x,'[\\.]')[[1]][1],sep='.')))
     ex$example=unlist(lapply(lapply(strsplit(ex$r.files,'[\\_]'),'[',1),function(x) strsplit(x,'[\\.]')[[1]][2]))
     
@@ -84,7 +85,7 @@ shinyServer(function(input, output, session) {
                  dat.loc=paste0(x$chapter,'/'),
                  r.file=x$r.files)
       },.progress = 'text')
-    structure.list$Stan<<-stan.tree.construct(out)%>%mutate(value=NA)%>%distinct
+    structure.list$Stan<<-stan.tree.construct(out) |> mutate(value=NA) |> distinct()
     }else{
      out=stan.sim.output
     }
@@ -101,7 +102,7 @@ shinyServer(function(input, output, session) {
     
     output.names=ldply(sim.output,.fun=function(x) data.frame(stan.obj.output=names(x)))
     
-    df=output.names%>%filter(stan.obj.output==input$TableView)
+    df=output.names |> filter(stan.obj.output==input$TableView)
     launch_shinystan(sim.output[[df$r.files]][[df$stan.obj.output]])
   })
   
@@ -132,7 +133,7 @@ shinyServer(function(input, output, session) {
   output$filterPrint=renderUI({
     toace=str.out=''
     if(!is.null(network$nodes)){
-      str.out=d3Tree::tree.filter(network$nodes,m())
+      str.out=d3Tree::tree_filter(network$nodes,m())
       junk=textConnection(capture.output(str.out[['FILTER']]))
       toace=paste0(readLines(junk),collapse='\n')
     } 
@@ -158,7 +159,7 @@ shinyServer(function(input, output, session) {
   })
   
   getStanScripts=reactive({
-    dlply(TreeStruct()%>%filter(r.files==input$getRScriptShow),.(stan.files),.fun=function(x){
+    dlply(TreeStruct() |> filter(r.files==input$getRScriptShow),.(stan.files),.fun=function(x){
       url.loc='https://raw.githubusercontent.com/stan-dev/example-models/master/ARM/'
       dat.loc=unique(paste0('Ch.',as.character(x$chapter),'/'))
       dat.loc=paste0(url.loc,dat.loc)

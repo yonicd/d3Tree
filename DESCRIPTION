@@ -1,8 +1,8 @@
 Package: d3Tree
-Version: 0.2.1
-Date: 2017-03-31
+Version: 0.3.0
+Date: 2024-01-23
 Title: Create Interactive Collapsible Trees with the JavaScript 'D3' Library
-Authors@R: c(person("Jonathan", "Sidi", email = "yonis@metrumrg.com", role = c("aut", "cre")),
+Authors@R: c(person("Jonathan", "Sidi", email = "yonicd@gmail.com", role = c("aut", "cre")),
              person("Kenton", "Russell", email = "kent.russell@timelyportfolio.com", 
              comment = "https://github.com/timelyportfolio",role = "ctb"))
 Description: Create and customize interactive collapsible 'D3' trees using the 'D3'
@@ -11,21 +11,18 @@ Description: Create and customize interactive collapsible 'D3' trees using the '
     When in Shiny the tree layout is observed by the server and can be used as a reactive filter
     of structured data.
 Depends:
-    R (>= 2.3.0)
+    R (>= 4.0.0)
 Imports:
-    magrittr,
-    stringr,
     htmlwidgets,
-    plyr,
-    dplyr
+    tibble,
+    tidyselect,
+    dplyr,
+    utils
 Suggests:
-    d3r,
-    shiny,
-    rmarkdown,
-    shinyAce
-License: GPL-2 | GPL-3
-URL: https://github.com/metrumresearchgroup/d3Tree
-BugReports: https://github.com/metrumresearchgroup/d3Tree/issues
+    rmarkdown
+License: MIT + file LICENSE
+URL: https://github.com/yonicd/d3Tree
+BugReports: https://github.com/yonicd/d3Tree/issues
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.2.3
