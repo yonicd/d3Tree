@@ -15,11 +15,12 @@ Depends:
 Imports:
     htmlwidgets,
     tibble,
+    tidyselect,
     dplyr,
     utils
 Suggests:
     rmarkdown
-License: GPL-2 | GPL-3
+License: MIT + file LICENSE
 URL: https://github.com/yonicd/d3Tree
 BugReports: https://github.com/yonicd/d3Tree/issues
 Encoding: UTF-8

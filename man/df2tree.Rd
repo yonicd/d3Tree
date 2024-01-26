@@ -18,10 +18,14 @@ nodes in each hierarchy}
 converts dataframe to json to send to javascript
 }
 \examples{
-df2tree(struct = as.data.frame(Titanic),rootname = 'Titanic')
+titanic_df <- as.data.frame(Titanic)
+
+df2tree(struct = titanic_df,rootname = 'Titanic')
+
 df2tree(
-  struct = as.data.frame(Titanic),
+  struct = titanic_df,
   rootname = 'Titanic',
   tool_tip = letters[1:5]
 )
+
 }
