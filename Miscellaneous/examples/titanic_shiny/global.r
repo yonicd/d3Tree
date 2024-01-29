@@ -6,4 +6,7 @@ library(plyr)
 library(dplyr)
 library(d3Tree)
 
-m=Titanic%>%data.frame%>%mutate(NEWCOL=NA)%>%distinct
+m <- Titanic |>
+  tibble::as_tibble() |>
+  dplyr::mutate(NEWCOL = NA) |>
+  dplyr::distinct()

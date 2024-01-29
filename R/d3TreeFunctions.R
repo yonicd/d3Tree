@@ -39,15 +39,14 @@ df2tree <- function(struct, rootname = 'root', tool_tip = NULL) {
 #' @title tree_filter
 #' @description creates character vector logial expression from tree structure
 #' @param nodes_list list created of tree nodes observed from d3tree.js hook
-#' @param m data.frame to filter
 #' @return data.frame
 #' @export
 #' @keywords internal
 #' @importFrom tibble tibble
 #' @importFrom tidyselect everything
-#' @importFrom utils globalVariables head
-#' @importFrom dplyr mutate select arrange filter across summarise bind_rows
-tree_filter <- function(nodes_list, m){
+#' @importFrom utils globalVariables
+#' @importFrom dplyr filter group_by group_split bind_rows arrange select mutate across summarise
+tree_filter <- function(nodes_list){
 
   nodesdf <- tibble::tibble(
     rowname = names(nodes_list),
@@ -78,21 +77,23 @@ tree_filter <- function(nodes_list, m){
 
     x_temp <- rbind(unique(x_count_depth), rep(0,x_depth + 1))
     x_temp[2, 1] <- 1
-    row.names(x_temp) <- c("depth","current.parent.node")
+    row.names(x_temp) <- c("depth", "current.parent.node")
+
+    node_value_vec <- nodesdf_show$x[grepl('value', nodesdf_show$rowname)]
+    node_value_vec <- c(node_value_vec[grepl('^value', names(node_value_vec))], node_value_vec[!grepl('^value', names(node_value_vec))])
+    
+    node_name_vec <- nodesdf_show$x[grepl('name', nodesdf_show$rowname)]
 
     x_map <- tibble::tibble(
-      node_name = c(
-        "root",
-        utils::head(nodesdf_show[grepl('value', nodesdf_show$rowname), 'x'], -1)[[1]]
-      ),
-      node_data = nodesdf_show[grepl('name', nodesdf_show$rowname), 2][[1]],
+      node_name = node_value_vec,
+      node_data = node_name_vec,
       node_id,
       parent_id
     )
 
     for(i in 2:nrow(x_map)){
       x_temp[2,x_count_depth[i]+1] <- node_id[i]
-      x_map$parent_id[i] <- x_temp[2,x_count_depth[i]]
+      x_map$parent_id[i] <- x_temp[2, x_count_depth[i]]
     }
 
     A <- matrix(0, nrow = nrow(x_map), ncol = nrow(x_map))
@@ -101,18 +102,26 @@ tree_filter <- function(nodes_list, m){
     tx <- cbind(x_map, d = rowSums(A))
 
     y <- tx |> 
-      dplyr::filter(node_name != "root") |> 
-      dplyr::mutate(dd = cumsum(d), .by = parent_id) |> 
-      dplyr::filter(d == dd) |> 
+      dplyr::filter(node_id != 1) |> 
+      dplyr::group_by(parent_id) |>
+      dplyr::group_split() |>
+      lapply(function(x){
+        if(all(x$d==0)){
+          x
+        }else{
+          x |> dplyr::filter(d!=0)
+        }
+      }) |>
+      dplyr::bind_rows() |>
       dplyr::arrange(node_id) |> 
-      dplyr::select(-c(d,dd)) |> 
+      dplyr::select(-c(d)) |> 
       dplyr::mutate(dplyr::across(tidyselect::everything(), as.character))
 
     y$leaf <- cumsum(as.numeric(!y$node_id %in% y$parent_id)) * as.numeric(!y$node_id %in% y$parent_id)
 
     logics <- vector('list',max(y$leaf))
     names(logics) <- seq(max(y$leaf))
-
+    
     for(i in 1:max(y$leaf)){
       x <- c(y$node_id[y$leaf == i], y$parent_id[y$leaf == i])
 
@@ -151,7 +160,7 @@ tree_filter <- function(nodes_list, m){
   return(active_filter)
 }
 
-utils::globalVariables(c('d', 'dd', 'node_name', 'l'))
+utils::globalVariables(c('d', 'node_name', 'l'))
 
 make_list <- function(x, value = NULL) {
 

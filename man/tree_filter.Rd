@@ -4,12 +4,10 @@
 \alias{tree_filter}
 \title{tree_filter}
 \usage{
-tree_filter(nodes_list, m)
+tree_filter(nodes_list)
 }
 \arguments{
 \item{nodes_list}{list created of tree nodes observed from d3tree.js hook}
-
-\item{m}{data.frame to filter}
 }
 \value{
 data.frame
